@@ -1,0 +1,152 @@
+[
+  {
+    "id": "Pharmacy_01",
+    "district": "Unknown",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": true,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_02",
+    "district": "Kaloum",
+    "digital_maturity": "BASIC_WEBSITE",
+    "has_website": true,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": true,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_03",
+    "district": "Ratoma",
+    "digital_maturity": "BASIC_WEBSITE",
+    "has_website": true,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": true,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_04",
+    "district": "Kaloum",
+    "digital_maturity": "BASIC_WEBSITE",
+    "has_website": true,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": true,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_05",
+    "district": "Ratoma",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": false,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_06",
+    "district": "Dixinn",
+    "digital_maturity": "ECOMMERCE_PARTIAL",
+    "has_website": true,
+    "has_online_ordering": false,
+    "shows_stock_or_price": true,
+    "has_social_media": true,
+    "notes_present": true
+  },
+  {
+    "id": "Pharmacy_07",
+    "district": "Ratoma",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": false,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_08",
+    "district": "Ratoma",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": false,
+    "notes_present": true
+  },
+  {
+    "id": "Pharmacy_09",
+    "district": "Ratoma",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": true,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_10",
+    "district": "Ratoma",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": false,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_11",
+    "district": "Ratoma",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": false,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_12",
+    "district": "Ratoma",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": false,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_13",
+    "district": "Ratoma",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": false,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_14",
+    "district": "Kaloum",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": false,
+    "notes_present": false
+  },
+  {
+    "id": "Pharmacy_15",
+    "district": "Kaloum",
+    "digital_maturity": "NONE",
+    "has_website": false,
+    "has_online_ordering": false,
+    "shows_stock_or_price": false,
+    "has_social_media": false,
+    "notes_present": false
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "source": "Approximate bounding boxes for Conakry communes, derived from public OpenStreetMap data (2026-08). Used to sample synthetic pharmacy geolocations within the pharmacy's known district.",
+    "note": "These are coarse bounding boxes suitable for MVP proximity ranking demonstration. Claude Code can refine to actual OSM commune polygons using shapely + Overpass API queries when time allows."
+  },
+  "districts": {
+    "Kaloum": {"lat_min": 9.500, "lat_max": 9.530, "lon_min": -13.720, "lon_max": -13.690},
+    "Dixinn": {"lat_min": 9.530, "lat_max": 9.560, "lon_min": -13.700, "lon_max": -13.660},
+    "Ratoma": {"lat_min": 9.560, "lat_max": 9.660, "lon_min": -13.680, "lon_max": -13.550},
+    "Matam":  {"lat_min": 9.520, "lat_max": 9.560, "lon_min": -13.680, "lon_max": -13.640},
+    "Matoto": {"lat_min": 9.540, "lat_max": 9.620, "lon_min": -13.640, "lon_max": -13.510},
+    "Unknown": {"lat_min": 9.520, "lat_max": 9.660, "lon_min": -13.720, "lon_max": -13.510}
+  }
+}

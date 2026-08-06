@@ -1,0 +1,16 @@
+id,district,digital_maturity,has_website,has_online_ordering,shows_stock_or_price,has_social_media,notes_present
+Pharmacy_01,Unknown,NONE,False,False,False,True,False
+Pharmacy_02,Kaloum,BASIC_WEBSITE,True,False,False,True,False
+Pharmacy_03,Ratoma,BASIC_WEBSITE,True,False,False,True,False
+Pharmacy_04,Kaloum,BASIC_WEBSITE,True,False,False,True,False
+Pharmacy_05,Ratoma,NONE,False,False,False,False,False
+Pharmacy_06,Dixinn,ECOMMERCE_PARTIAL,True,False,True,True,True
+Pharmacy_07,Ratoma,NONE,False,False,False,False,False
+Pharmacy_08,Ratoma,NONE,False,False,False,False,True
+Pharmacy_09,Ratoma,NONE,False,False,False,True,False
+Pharmacy_10,Ratoma,NONE,False,False,False,False,False
+Pharmacy_11,Ratoma,NONE,False,False,False,False,False
+Pharmacy_12,Ratoma,NONE,False,False,False,False,False
+Pharmacy_13,Ratoma,NONE,False,False,False,False,False
+Pharmacy_14,Kaloum,NONE,False,False,False,False,False
+Pharmacy_15,Kaloum,NONE,False,False,False,False,False
