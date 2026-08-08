@@ -16,3 +16,13 @@ migration) — both deferred to Aug 17-18 polish.
 **Tomorrow:** Figma inspection, frontend scaffold (React + Vite + TS),
 design system tokens extraction, implement critical-path screens
 (search / results / pharmacy detail).
+
+**Ethics checkpoint (raised end-of-day):** The 4 July DSREC message was an
+exemption ("no human participants = no approval needed"), not a formal
+conditional approval. Adding DITL doctors for expert review potentially
+changes scope. Saturday morning first task is to email DSREC (CC Dr. Iqbal)
+asking whether expert technical review of the artefact falls within the
+existing exemption. Track B evaluation (heuristic + literature-anchored,
+no human subjects) is prepared in parallel and will run regardless of the
+DSREC response. See `../Rest_of_Plan_8Aug_to_19Aug.md` for the full
+two-track schedule.

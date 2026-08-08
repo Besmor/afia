@@ -1,0 +1,21 @@
+@import './tokens.css';
+@import './fonts.css';
+
+/* Minimal reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Baloo Tamma 2', system-ui, sans-serif;
+  color: var(--color-gray-02-100);
+  background: var(--color-gray-02-10);
+}
