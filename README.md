@@ -53,6 +53,7 @@ afia/
 ├── backend/               FastAPI middle-layer service
 │   ├── app/
 │   │   ├── api/           HTTP route handlers
+│   │   ├── db/            Shared SQLAlchemy engine/session factory
 │   │   ├── models/        SQLAlchemy models
 │   │   ├── services/      Business logic (parser, ranker, SMS mock)
 │   │   └── data/          Synthetic data generation scripts

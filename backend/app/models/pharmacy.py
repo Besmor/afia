@@ -86,7 +86,7 @@ class Pharmacy(Base):
         DateTime, default=datetime.utcnow, nullable=False
     )
 
-    stock_items: Mapped[list["StockItem"]] = relationship(
+    stock_items: Mapped[list[StockItem]] = relationship(
         back_populates="pharmacy", cascade="all, delete-orphan"
     )
 
@@ -106,7 +106,7 @@ class Medication(Base):
         DateTime, default=datetime.utcnow, nullable=False
     )
 
-    stock_items: Mapped[list["StockItem"]] = relationship(
+    stock_items: Mapped[list[StockItem]] = relationship(
         back_populates="medication", cascade="all, delete-orphan"
     )
 
@@ -136,5 +136,5 @@ class StockItem(Base):
         DateTime, default=datetime.utcnow, nullable=False
     )
 
-    pharmacy: Mapped["Pharmacy"] = relationship(back_populates="stock_items")
-    medication: Mapped["Medication"] = relationship(back_populates="stock_items")
+    pharmacy: Mapped[Pharmacy] = relationship(back_populates="stock_items")
+    medication: Mapped[Medication] = relationship(back_populates="stock_items")

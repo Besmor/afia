@@ -11,7 +11,7 @@ A middle-layer pharmaceutical access platform for Guinea (specifically Conakry).
 - **Ethics constraint: synthetic data only.** No real patient, user, or pharmacy operational data anywhere in the system. All pharmacy records, inventory, and user scenarios are programmatically generated and grounded in the 15-pharmacy digital-maturity scan.
 - **Scope: critical path only for MVP.** Landing/search → results → pharmacy detail. Do NOT implement onboarding, profile, favourites, notifications, offline UX, or any other Figma screen for the MVP. Those are documented as future work.
 - **Deadline: 19 August 2026.** ~13 days from build kickoff (6 Aug). Every implementation decision should be judged against "does this reach a working evaluable prototype in time?"
-- **Language:** UK English throughout code comments, commit messages, and docs. No em-dashes (author preference).
+- **Language:** UK English throughout code comments, commit messages, and docs. No em-dashes in code, comments, docs, commit messages, or ADRs (see "What NOT to do" for the user-facing-content exception).
 - **First person plural ("we") in documentation.** Not "I".
 
 ## Stack (locked)
@@ -59,7 +59,10 @@ Figma design system exists (professionally designed, supervisor-approved). Use t
 - Do not add analytics or telemetry. Ethics constraint.
 - Do not implement any Figma screen outside the critical path unless explicitly asked.
 - Do not spend time on deployment infrastructure. Local demo only.
-- Do not add em-dashes to any output.
+- Do not add em-dashes in code, comments, docs, commit messages, or ADRs.
+  Em-dashes ARE acceptable in user-facing content (SMS messages, PWA UI text,
+  error messages shown to end users) where they are typographically appropriate,
+  particularly for French-language content.
 
 ## Where things live
 

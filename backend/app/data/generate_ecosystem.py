@@ -154,7 +154,7 @@ def main() -> None:
     args = parser.parse_args()
 
     rng = random.Random(args.seed)
-    now = datetime(2026, 8, 6, 18, 0, 0)  # fixed clock for reproducibility
+    now = datetime(2026, 8, 6, 18, 0, 0)  # noqa: DTZ001 (naive matches DB columns; see TD-002 for tz-migration)
 
     scan = load_json(SCAN_PATH)
     eml = load_json(EML_PATH)
