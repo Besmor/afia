@@ -10,9 +10,9 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from sqlalchemy import func, or_, select
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session
 
-from app.data.seed_db import DEFAULT_DB_PATH, build_engine
+from app.db.session import get_session
 from app.models.pharmacy import Medication, Pharmacy, StockItem
 from app.services.ranking import rank_results
 
@@ -21,21 +21,6 @@ router = APIRouter(tags=["search"])
 # Kaloum commune centroid: default origin when the caller supplies no location.
 DEFAULT_USER_LAT = 9.515
 DEFAULT_USER_LON = -13.705
-
-_engine = build_engine(DEFAULT_DB_PATH)
-_SessionLocal = sessionmaker(bind=_engine)
-
-
-def get_session():
-    """Yield a database session for the request, closed once the request ends.
-
-    Overridden in tests to point at a hermetic in-memory database.
-    """
-    session = _SessionLocal()
-    try:
-        yield session
-    finally:
-        session.close()
 
 
 class SearchResult(BaseModel):
@@ -55,15 +40,14 @@ class SearchResult(BaseModel):
     last_verified_at: str
 
 
-@router.get("/search", response_model=list[SearchResult])
-def search(
-    q: str = Query(..., min_length=1, description="Medication name query (INN or brand name)."),
-    user_lat: float = Query(DEFAULT_USER_LAT, description="Caller latitude; defaults to the Kaloum centroid."),
-    user_lon: float = Query(DEFAULT_USER_LON, description="Caller longitude; defaults to the Kaloum centroid."),
-    limit: int = Query(10, ge=1, le=100, description="Maximum number of results returned."),
-    session: Session = Depends(get_session),  # noqa: B008 (FastAPI's DI pattern requires this)
+def search_medications(
+    session: Session,
+    q: str,
+    user_lat: float = DEFAULT_USER_LAT,
+    user_lon: float = DEFAULT_USER_LON,
+    limit: int = 10,
 ) -> list[SearchResult]:
-    """Ranked medication search.
+    """DB-level ranked medication search.
 
     Matches `q` case-insensitively as a substring of either the medication's
     INN or its brand names, then joins to stock held in quantity > 0. The
@@ -71,6 +55,10 @@ def search(
     `user_lat`/`user_lon`, stock quantity, digital-maturity tier trust)
     before `limit` is applied, so limiting never discards a better-ranked
     result in favour of a worse one.
+
+    This is the shared search implementation: the `GET /search` endpoint
+    below and `app.services.sms_mock` both call it directly, rather than the
+    SMS mock going through the HTTP endpoint.
     """
     normalised = q.strip().lower()
     pattern = f"%{normalised}%"
@@ -112,3 +100,15 @@ def search(
 
     ranked = rank_results(results, user_lat, user_lon)
     return ranked[:limit]
+
+
+@router.get("/search", response_model=list[SearchResult])
+def search(
+    q: str = Query(..., min_length=1, description="Medication name query (INN or brand name)."),
+    user_lat: float = Query(DEFAULT_USER_LAT, description="Caller latitude; defaults to the Kaloum centroid."),
+    user_lon: float = Query(DEFAULT_USER_LON, description="Caller longitude; defaults to the Kaloum centroid."),
+    limit: int = Query(10, ge=1, le=100, description="Maximum number of results returned."),
+    session: Session = Depends(get_session),  # noqa: B008 (FastAPI's DI pattern requires this)
+) -> list[SearchResult]:
+    """Ranked medication search. See `search_medications` for the implementation."""
+    return search_medications(session, q, user_lat, user_lon, limit)
