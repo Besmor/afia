@@ -1,0 +1,83 @@
+/*
+ * Accueil (home) screen, docs/figma-inspection.md, Screen 1 (node
+ * 5886:1633). Per the FT-6 task brief, only the elements it explicitly
+ * calls out are reproduced: Afia logo top-left, header, illustration,
+ * search bar, primary CTA. The status bar mock, history button and bottom
+ * nav bar from the Figma frame are out of MVP scope (nav bar routes to
+ * features excluded by CLAUDE.md: history, tickets, profile) and are
+ * intentionally omitted.
+ */
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--color-background-01);
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--spacing-3xl) var(--spacing-2xl);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-3xl);
+}
+
+/*
+ * Real exported lockup (icon + wordmark), intrinsic 472x173 (~2.73:1).
+ * No exact header-logo size is documented in figma-inspection.md, so 40px
+ * is chosen within the 40-56px guidance as proportionate to the header row
+ * (comparable to the circular icon button scale elsewhere on Accueil).
+ * Width is left to scale from height to preserve the aspect ratio.
+ */
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.heading {
+  font-family: 'Baloo Tamma 2', sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: var(--line-height-base);
+  color: var(--color-secondary-04);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.locationStatus {
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-gray-02-70);
+}
+
+.validationError {
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-danger);
+}

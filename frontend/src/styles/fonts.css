@@ -1,12 +1,12 @@
 /*
  * Fonts actually used on inspected app screens (see docs/figma-inspection.md,
  * "Fonts actually used on app screens"): Baloo Tamma 2 for display/headings
- * and buttons. Inter is kept as a secondary fallback for body/caption text,
- * since it's the family documented in the design system's own Typography
- * page (H1-Caption scale) even though real screens favour Manrope for body
- * text — Manrope is not yet imported here and will be added in FT-6 once
- * that gap is resolved.
+ * and buttons, Manrope for body/UI text (nav labels, search input, list
+ * rows). Inter is kept as a secondary fallback for the documented-but-
+ * largely-unused design-system Typography scale (H1-Caption), and for the
+ * iOS status-bar clock glyph, which we do not reproduce as UI anyway.
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');

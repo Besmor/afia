@@ -1,0 +1,37 @@
+/*
+ * Primary "Rechercher" button — Accueil screen (docs/figma-inspection.md,
+ * Screen 1). Radius 24px matches the "primary/secondary buttons" entry
+ * under Design System > Radii; fill/text colours from the Accueil design
+ * tokens list (Primary/Primary 01 fill). Label size: the inspection doc
+ * records Baloo Tamma at 32/20/15px on real screens without pinning which
+ * of 20/15 belongs to the button label specifically (32 is clearly the page
+ * heading) — 20px is used here as the more legible of the two documented
+ * candidates.
+ */
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--spacing-lg) var(--spacing-2xl);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-01);
+  color: var(--color-gray-02-10);
+  font-family: 'Baloo Tamma 2', sans-serif;
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-base);
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--color-primary-02);
+}
+
+.button:disabled {
+  background: var(--color-secondary-01);
+  color: var(--color-gray-02-70);
+  cursor: not-allowed;
+}

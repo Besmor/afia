@@ -1,0 +1,95 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PrimaryButton } from '../components/PrimaryButton';
+import { SearchBar } from '../components/SearchBar';
+import { DistrictPicker } from '../components/DistrictPicker';
+import { DEFAULT_LOCATION, fromDistrict, getUserLocation, type UserLocation } from '../lib/location';
+import type { District } from '../constants/districts';
+import styles from './Landing.module.css';
+
+type GeoStatus = 'checking' | 'resolved' | 'needs-picker';
+
+const EMPTY_QUERY_MESSAGE = "Veuillez indiquer le nom d'un médicament pour lancer la recherche.";
+
+/** Landing/search screen. See docs/figma-inspection.md, Screen 1 (Accueil). */
+export function Landing() {
+  const navigate = useNavigate();
+  const [geoStatus, setGeoStatus] = useState<GeoStatus>('checking');
+  const [location, setLocation] = useState<UserLocation | null>(null);
+  const [query, setQuery] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    getUserLocation()
+      .then((resolved) => {
+        if (cancelled) return;
+        setLocation(resolved);
+        setGeoStatus('resolved');
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setGeoStatus('needs-picker');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function handleDistrictSelect(district: District) {
+    setLocation(fromDistrict(district));
+    setGeoStatus('resolved');
+  }
+
+  function handleSearch() {
+    if (query.trim() === '') {
+      setValidationError(EMPTY_QUERY_MESSAGE);
+      return;
+    }
+
+    setValidationError(null);
+    const origin = location ?? DEFAULT_LOCATION;
+    const params = new URLSearchParams({
+      q: query.trim(),
+      user_lat: String(origin.lat),
+      user_lon: String(origin.lon),
+    });
+    navigate(`/results?${params.toString()}`);
+  }
+
+  return (
+    <div className={styles.page}>
+      <img className={styles.backdrop} src="/illustrations/Background-img-mobile.svg" alt="" aria-hidden="true" />
+
+      <div className={styles.content}>
+        <header className={styles.header}>
+          <img className={styles.logo} src="/afia-logo-lockup.svg" alt="Afia" />
+        </header>
+
+        <h1 className={styles.heading}>Trouvez vos médicaments</h1>
+
+        <div className={styles.form}>
+          {geoStatus === 'checking' && (
+            <p className={styles.locationStatus}>Localisation en cours…</p>
+          )}
+
+          {geoStatus === 'needs-picker' && <DistrictPicker onSelect={handleDistrictSelect} />}
+
+          <SearchBar
+            value={query}
+            onChange={(value) => {
+              setQuery(value);
+              if (validationError) setValidationError(null);
+            }}
+          />
+
+          {validationError && <p className={styles.validationError}>{validationError}</p>}
+
+          <PrimaryButton onClick={handleSearch}>Rechercher</PrimaryButton>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,52 @@
+/*
+ * Fallback district list shown when geolocation is denied/unavailable.
+ * Styled as the list-row card pattern seen 3+ times in the design system
+ * (List Item component, screen 3's selection rows): white card, rounded
+ * 16px, border #EDEDED (Gray_02/30), icon + label per row.
+ */
+
+.message {
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-gray-02-80);
+  margin-bottom: var(--spacing-lg);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-gray-02-30);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-02-10);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 1px solid var(--color-gray-02-30);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-02-10);
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-gray-02-100);
+  cursor: pointer;
+  text-align: left;
+}
+
+.row:hover {
+  border-color: var(--color-primary-02);
+  color: var(--color-primary-02);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
