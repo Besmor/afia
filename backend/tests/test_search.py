@@ -78,3 +78,27 @@ def test_search_is_case_insensitive(client: TestClient):
     assert upper.status_code == 200
     assert len(upper.json()) == len(lower.json())
     assert len(upper.json()) > 0
+
+
+def test_ranking_favours_kaloum_pharmacies_near_kaloum_centroid(client: TestClient):
+    """A search from the Kaloum centroid should surface Kaloum pharmacies first.
+
+    Kaloum stock for paracetamol sits within ~1.4 km of the centroid, while
+    the rest of the synthetic ecosystem's matches sit 4.9 km+ away, so the
+    0.6-weighted distance factor should dominate the top of the ranking.
+    Ranking design in `docs/decisions/ADR-006-ranking-weights.md`.
+    """
+    response = client.get(
+        "/search",
+        params={
+            "q": "paracetamol",
+            "user_lat": search.DEFAULT_USER_LAT,
+            "user_lon": search.DEFAULT_USER_LON,
+            "limit": 3,
+        },
+    )
+
+    assert response.status_code == 200
+    results = response.json()
+    assert len(results) == 3
+    assert all(result["district"] == "Kaloum" for result in results)

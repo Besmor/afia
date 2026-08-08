@@ -1,8 +1,9 @@
 """Medication search endpoint.
 
-GET /search returns unranked pharmacy/stock matches for a free-text medication
-query. Walking-distance ranking is Block 3 (see CLAUDE.md build order) and is
-deliberately not implemented here.
+GET /search returns ranked pharmacy/stock matches for a free-text medication
+query, ordered by the combined ranking score from `app.services.ranking`
+(walking-realistic distance, stock quantity, digital-maturity tier trust).
+Weighting rationale in `docs/decisions/ADR-006-ranking-weights.md`.
 """
 from __future__ import annotations
 
@@ -13,6 +14,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.data.seed_db import DEFAULT_DB_PATH, build_engine
 from app.models.pharmacy import Medication, Pharmacy, StockItem
+from app.services.ranking import rank_results
 
 router = APIRouter(tags=["search"])
 
@@ -61,12 +63,14 @@ def search(
     limit: int = Query(10, ge=1, le=100, description="Maximum number of results returned."),
     session: Session = Depends(get_session),  # noqa: B008 (FastAPI's DI pattern requires this)
 ) -> list[SearchResult]:
-    """Unranked medication search.
+    """Ranked medication search.
 
     Matches `q` case-insensitively as a substring of either the medication's
-    INN or its brand names, then joins to stock held in quantity > 0.
-    `user_lat`/`user_lon` are accepted for the ranking step introduced in
-    Block 3 and are not yet used to order results.
+    INN or its brand names, then joins to stock held in quantity > 0. The
+    full match set is scored by `rank_results` (distance from
+    `user_lat`/`user_lon`, stock quantity, digital-maturity tier trust)
+    before `limit` is applied, so limiting never discards a better-ranked
+    result in favour of a worse one.
     """
     normalised = q.strip().lower()
     pattern = f"%{normalised}%"
@@ -83,12 +87,11 @@ def search(
         )
         .where(StockItem.quantity > 0)
         .order_by(Pharmacy.id, Medication.id)
-        .limit(limit)
     )
 
     rows = session.execute(stmt).all()
 
-    return [
+    results = [
         SearchResult(
             pharmacy_id=pharmacy.id,
             pharmacy_name=pharmacy.name,
@@ -106,3 +109,6 @@ def search(
         )
         for pharmacy, medication, stock_item in rows
     ]
+
+    ranked = rank_results(results, user_lat, user_lon)
+    return ranked[:limit]

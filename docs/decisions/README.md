@@ -24,5 +24,7 @@ What follows from the decision (positive and negative).
 - ADR-002: SMS mock over Twilio for MVP
 - ADR-003: Synthetic pharmacy ecosystem for evaluation
 - ADR-004: Critical-path-only MVP scope
+- ADR-005: Synthetic ecosystem data model
+- ADR-006: Search result ranking weights
 
-_Files to be added as decisions are formalised. The four above are already made and should be written up during the build._
+_Files to be added as decisions are formalised. ADR-001 through ADR-004 are already made and still need to be written up._
