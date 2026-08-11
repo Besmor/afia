@@ -1,0 +1,104 @@
+/*
+ * Vue Liste - Résultats des recherches (docs/figma-inspection.md, Screen 5).
+ * Page shell mirrors Landing.module.css (centred 480px column, background-01)
+ * since both share the same app frame; header uses the circular icon-button
+ * pattern (`rounded-[400px]`) documented as reused 3+ times across screens.
+ */
+
+.page {
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--spacing-3xl) var(--spacing-2xl);
+  background: var(--color-background-01);
+  font-family: 'Manrope', sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-gray-02-30);
+  border-radius: var(--radius-circle);
+  background: var(--color-gray-02-10);
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  border-color: var(--color-primary-02);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-gray-02-90);
+}
+
+.heading {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Baloo Tamma 2', sans-serif;
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-base);
+  color: var(--color-secondary-04);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-02-70);
+  margin-bottom: var(--spacing-xl);
+}
+
+.status {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-gray-02-70);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  list-style: none;
+}
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.errorText {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-danger);
+}
+
+.emptyBox {
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  border: 1px solid var(--color-gray-02-30);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-02-10);
+  text-align: center;
+}
+
+.emptyText {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-gray-02-70);
+}

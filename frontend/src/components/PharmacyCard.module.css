@@ -1,0 +1,128 @@
+/*
+ * Result list-row card — adapted from the Figma list-row pattern (white,
+ * `--radius-md`, border `--color-gray-02-30`) seen on the results screen
+ * (`Vue Liste-Résultat des recherches.svg` / results-list.png) and reused
+ * elsewhere in the design system (DistrictPicker's rows, List Item
+ * component). Rendered as a <button> so the whole card is one click target.
+ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-gray-02-30);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-02-10);
+  font-family: 'Manrope', sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card:hover {
+  border-color: var(--color-primary-02);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.crossIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-main);
+}
+
+.titleBlock {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-02-100);
+  text-transform: uppercase;
+  line-height: var(--line-height-base);
+}
+
+.variant {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-02-70);
+  margin-top: 2px;
+}
+
+.chevron {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-gray-02-60);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-02-70);
+}
+
+.pinIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-gray-02-60);
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-gray-02-60);
+}
+
+.tierBadge {
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.stockPill {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-02);
+  color: var(--color-gray-02-90);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+}
+
+.stockIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.price {
+  font-size: var(--font-size-title2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-02-100);
+}

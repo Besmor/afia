@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { fetchSearch, type SearchResult } from '../lib/api';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { PharmacyCard } from '../components/PharmacyCard';
+import { IconChevronLeft, IconFilter } from '../components/icons';
+import styles from './Results.module.css';
 
 type RequestState =
   | { status: 'loading' }
@@ -9,12 +12,19 @@ type RequestState =
   | { status: 'success'; results: SearchResult[] };
 
 /**
- * Results screen (docs/figma-inspection.md, Screen 5). Wires the E2E search
- * call for FT-6 Block A: q/user_lat/user_lon come from the URL (set by
- * Landing.tsx), the raw response is dumped as JSON for now, and the styled
- * pharmacy card comes in Block B.
+ * Results screen (docs/figma-inspection.md, Screen 5 — NOT INSPECTED in
+ * Figma, see PharmacyCard's tier-badge comment; built from
+ * `design-refs/Vue Liste-Résultat des recherches.svg` /
+ * `results-list.png`). FT-6 Block A wired the E2E search call; this is
+ * Block B, replacing the raw JSON dump with styled cards.
+ *
+ * The OUVERTE/FERMÉE/"De garde"/"Liste"-"Maps" toggle and filter-popup
+ * content from the Figma frame have no backing data or functionality yet
+ * (no opening-hours fields, no map view, no filter logic) — per CLAUDE.md's
+ * critical-path scope, only the filter *icon* is rendered, inert.
  */
 export function Results() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') ?? '';
   const userLat = Number(searchParams.get('user_lat'));
@@ -38,24 +48,61 @@ export function Results() {
     runSearch();
   }, [runSearch]);
 
-  return (
-    <main style={{ padding: 'var(--spacing-2xl)', fontFamily: 'Manrope, sans-serif' }}>
-      <h1 style={{ fontFamily: "'Baloo Tamma 2', sans-serif", color: 'var(--color-secondary-04)' }}>
-        {state.status === 'success' ? 'Résultats' : 'Résultats (à venir)'}
-      </h1>
+  const pharmacyCount =
+    state.status === 'success' ? new Set(state.results.map((r) => r.pharmacy_id)).size : 0;
 
-      {state.status === 'loading' && <p>Recherche en cours...</p>}
+  return (
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <button
+          type="button"
+          className={styles.iconButton}
+          onClick={() => navigate('/')}
+          aria-label="Retour"
+        >
+          <IconChevronLeft className={styles.icon} />
+        </button>
+
+        <h1 className={styles.heading}>Résultats pour {query}</h1>
+
+        <button type="button" className={styles.iconButton} aria-label="Filtrer">
+          <IconFilter className={styles.icon} />
+        </button>
+      </header>
+
+      {state.status === 'success' && (
+        <p className={styles.count}>{pharmacyCount} pharmacies trouvées</p>
+      )}
+
+      {state.status === 'loading' && <p className={styles.status}>Recherche en cours…</p>}
 
       {state.status === 'error' && (
-        <div>
-          <p style={{ color: 'var(--color-danger)' }}>
+        <div className={styles.errorBox}>
+          <p className={styles.errorText}>
             Impossible de charger les résultats. Vérifiez que le backend tourne sur localhost:8000.
           </p>
           <PrimaryButton onClick={runSearch}>Réessayer</PrimaryButton>
         </div>
       )}
 
-      {state.status === 'success' && <pre>{JSON.stringify(state.results, null, 2)}</pre>}
+      {state.status === 'success' && state.results.length === 0 && (
+        <div className={styles.emptyBox}>
+          <p className={styles.emptyText}>
+            Aucune pharmacie n'a été trouvée pour « {query} ». Essayez un autre médicament ou
+            vérifiez l'orthographe.
+          </p>
+        </div>
+      )}
+
+      {state.status === 'success' && state.results.length > 0 && (
+        <ul className={styles.list}>
+          {state.results.map((result) => (
+            <li key={`${result.pharmacy_id}-${result.medication_id}`}>
+              <PharmacyCard result={result} userLat={userLat} userLon={userLon} />
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }
