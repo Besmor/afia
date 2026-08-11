@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PrimaryButton } from '../components/PrimaryButton';
-import { SearchBar } from '../components/SearchBar';
+import { MedicationSearch } from '../components/MedicationSearch';
 import { DistrictPicker } from '../components/DistrictPicker';
 import { DEFAULT_LOCATION, fromDistrict, getUserLocation, type UserLocation } from '../lib/location';
 import type { District } from '../constants/districts';
+import type { AutocompleteResult } from '../lib/api';
 import styles from './Landing.module.css';
 
 type GeoStatus = 'checking' | 'resolved' | 'needs-picker';
@@ -17,7 +18,14 @@ export function Landing() {
   const [geoStatus, setGeoStatus] = useState<GeoStatus>('checking');
   const [location, setLocation] = useState<UserLocation | null>(null);
   const [query, setQuery] = useState('');
+  const [medication, setMedication] = useState<AutocompleteResult | null>(null);
+  const [dose, setDose] = useState<AutocompleteResult | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  // CTA is disabled only mid-pick: a medication chosen from the dropdown but
+  // no dose yet. Plain free-text search (medication never picked) stays
+  // enabled, same as before Block F.
+  const searchDisabled = medication !== null && dose === null;
 
   useEffect(() => {
     let cancelled = false;
@@ -44,13 +52,29 @@ export function Landing() {
   }
 
   function handleSearch() {
+    const origin = location ?? DEFAULT_LOCATION;
+
+    if (medication && dose) {
+      setValidationError(null);
+      const params = new URLSearchParams({
+        medication_id: String(dose.id),
+        strength: dose.strength,
+        inn: medication.inn,
+        user_lat: String(origin.lat),
+        user_lon: String(origin.lon),
+      });
+      navigate(`/results?${params.toString()}`);
+      return;
+    }
+
+    if (searchDisabled) return; // medication picked, dose not yet: CTA should be disabled anyway
+
     if (query.trim() === '') {
       setValidationError(EMPTY_QUERY_MESSAGE);
       return;
     }
 
     setValidationError(null);
-    const origin = location ?? DEFAULT_LOCATION;
     const params = new URLSearchParams({
       q: query.trim(),
       user_lat: String(origin.lat),
@@ -77,17 +101,24 @@ export function Landing() {
 
           {geoStatus === 'needs-picker' && <DistrictPicker onSelect={handleDistrictSelect} />}
 
-          <SearchBar
-            value={query}
-            onChange={(value) => {
+          <MedicationSearch
+            query={query}
+            onQueryChange={(value) => {
               setQuery(value);
               if (validationError) setValidationError(null);
             }}
+            medication={medication}
+            onMedicationChange={setMedication}
+            dose={dose}
+            onDoseChange={setDose}
+            onSubmitFreeText={handleSearch}
           />
 
           {validationError && <p className={styles.validationError}>{validationError}</p>}
 
-          <PrimaryButton onClick={handleSearch}>Rechercher</PrimaryButton>
+          <PrimaryButton onClick={handleSearch} disabled={searchDisabled} aria-disabled={searchDisabled}>
+            Rechercher
+          </PrimaryButton>
         </div>
       </div>
     </div>

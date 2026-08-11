@@ -123,3 +123,41 @@ export function IconDirections({ className }: IconProps) {
     </svg>
   );
 }
+
+/**
+ * Icons added for the Block F autocomplete dropdown (`design-refs/dosage
+ * screens/`, which also flattens glyphs to raw paths — same redraw approach
+ * as the icons above). One row icon per medication form family: solid oral
+ * doses (tablet/capsule/sachet/suppository) get the capsule glyph, liquid
+ * and other doses (syrup/drops/injection/ointment) get the droplet glyph.
+ */
+export function IconCapsule({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-35 12 12)" stroke="currentColor" strokeWidth="2" />
+      <path d="M12 12l3.2-3.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconDrop({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 4c3 4 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-7 6-11Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Selected-row check on the autocomplete dropdown (hover/active state). */
+export function IconCheck({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}

@@ -1,0 +1,179 @@
+/*
+ * Autocomplete + dose picker (Block F), `design-refs/dosage screens/*.svg`
+ * (Recherche / Recherche-Sélection / Dose_selection / Dose_selected). Text
+ * in those exports is flattened to paths and the placeholder copy is a
+ * generic Figma-kit example ("Un adderall (générique)"), not real Afia
+ * content, so the row layout below is redrawn from the visual structure of
+ * the four states while the copy comes from the real medication catalogue.
+ */
+
+.container {
+  position: relative;
+}
+
+/* Free-text mode: SearchBar renders the pill input; this is its dropdown. */
+.dropdown {
+  position: absolute;
+  top: calc(100% + var(--spacing-sm));
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin: 0;
+  padding: var(--spacing-sm);
+  list-style: none;
+  background: var(--color-gray-02-10);
+  border: 1px solid var(--color-gray-02-30);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(10, 10, 10, 0.08);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-md);
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.row:hover,
+.rowActive {
+  background: var(--color-gray-02-20);
+}
+
+.rowIcon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--color-gray-02-60);
+}
+
+.rowText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rowInn {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-gray-02-100);
+}
+
+.rowSecondary {
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-gray-02-70);
+}
+
+.rowCheck {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--color-primary-02);
+}
+
+/* Split mode: [ medication field | Dose trigger ], per Dose_selection.svg /
+   Dose_selected.svg. Same overall pill as SearchBar.module.css, divided in
+   two by a hairline border rather than two separate pills. */
+.split {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-gray-02-30);
+  border-radius: var(--radius-lg);
+  background: var(--color-gray-02-10);
+  overflow: hidden;
+}
+
+.split:focus-within {
+  border-color: var(--color-gray-02-50);
+}
+
+.medicationField {
+  flex: 1;
+  min-width: 0;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border: none;
+  background: transparent;
+  color: var(--color-gray-02-100);
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.medicationField:focus {
+  outline: none;
+}
+
+.doseTrigger {
+  flex: 0 0 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg) var(--spacing-md);
+  border: none;
+  border-left: 1px solid var(--color-gray-02-30);
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+}
+
+.doseTrigger:focus {
+  outline: none;
+  background: var(--color-gray-02-20);
+}
+
+.dosePlaceholder {
+  color: var(--color-gray-02-50);
+  font-weight: 500;
+}
+
+.doseValue {
+  color: var(--color-gray-02-100);
+  font-weight: 700;
+}
+
+.doseDropdown {
+  position: absolute;
+  top: calc(100% + var(--spacing-sm));
+  right: 0;
+  z-index: 10;
+  min-width: 104px;
+  margin: 0;
+  padding: var(--spacing-sm) 0;
+  list-style: none;
+  background: var(--color-gray-02-10);
+  border: 1px solid var(--color-gray-02-30);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(10, 10, 10, 0.08);
+}
+
+.doseRow {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  background: transparent;
+  color: var(--color-gray-02-80);
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.doseRow:hover,
+.doseRowActive {
+  background: var(--color-gray-02-20);
+}

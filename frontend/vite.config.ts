@@ -11,6 +11,7 @@ export default defineConfig({
     proxy: {
       '/search': 'http://localhost:8000',
       '/pharmacies': 'http://localhost:8000',
+      '/medications': 'http://localhost:8000',
     },
   },
 })

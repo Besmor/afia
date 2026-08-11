@@ -1,7 +1,7 @@
 """Afia FastAPI application entrypoint."""
 from fastapi import FastAPI
 
-from app.api import pharmacies, search
+from app.api import medications, pharmacies, search
 
 app = FastAPI(
     title="Afia",
@@ -11,6 +11,7 @@ app = FastAPI(
 
 app.include_router(search.router)
 app.include_router(pharmacies.router)
+app.include_router(medications.router)
 
 
 @app.get("/health")

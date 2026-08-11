@@ -118,3 +118,29 @@ def test_ranking_favours_kaloum_pharmacies_near_kaloum_centroid(client: TestClie
     results = response.json()
     assert len(results) == 3
     assert all(result["district"] == "Kaloum" for result in results)
+
+
+def test_medication_id_and_strength_filters_to_exact_row(client: TestClient):
+    """medication_id=1 is the Paracetamol 500 mg tablet row in the synthetic
+    seed; combined with strength, results must all be that exact row.
+    """
+    response = client.get("/search", params={"medication_id": 1, "strength": "500 mg"})
+
+    assert response.status_code == 200
+    results = response.json()
+    assert len(results) > 0
+    assert all(result["medication_id"] == 1 for result in results)
+    assert all(result["medication_strength"] == "500 mg" for result in results)
+
+
+def test_precise_query_excludes_other_strengths(client: TestClient):
+    """medication_id=2 is the Paracetamol syrup (120 mg/5 ml) row, a different
+    strength of the same INN as medication_id=1; querying by id alone (no
+    strength) must not leak the tablet row's stock.
+    """
+    response = client.get("/search", params={"medication_id": 2})
+
+    assert response.status_code == 200
+    results = response.json()
+    assert len(results) > 0
+    assert all(result["medication_strength"] == "120 mg/5 ml" for result in results)

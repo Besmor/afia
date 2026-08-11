@@ -30,19 +30,28 @@ export function Results() {
   const userLat = Number(searchParams.get('user_lat'));
   const userLon = Number(searchParams.get('user_lon'));
 
+  // Precise path (Block F): Landing's autocomplete + dose picker navigates
+  // here with medication_id/strength/inn instead of a free-text q.
+  const medicationIdParam = searchParams.get('medication_id');
+  const medicationId = medicationIdParam !== null ? Number(medicationIdParam) : undefined;
+  const strength = searchParams.get('strength') ?? undefined;
+  const inn = searchParams.get('inn') ?? '';
+
+  const displayTerm = medicationId !== undefined ? `${inn} ${strength ?? ''}`.trim() : query;
+
   const [state, setState] = useState<RequestState>({ status: 'loading' });
 
   const runSearch = useCallback(() => {
     setState({ status: 'loading' });
 
-    fetchSearch(query, userLat, userLon)
+    fetchSearch(query, userLat, userLon, 10, medicationId !== undefined ? { medicationId, strength } : undefined)
       .then((results) => {
         setState({ status: 'success', results });
       })
       .catch(() => {
         setState({ status: 'error' });
       });
-  }, [query, userLat, userLon]);
+  }, [query, userLat, userLon, medicationId, strength]);
 
   useEffect(() => {
     runSearch();
@@ -63,7 +72,7 @@ export function Results() {
           <IconChevronLeft className={styles.icon} />
         </button>
 
-        <h1 className={styles.heading}>Résultats pour {query}</h1>
+        <h1 className={styles.heading}>Résultats pour {displayTerm}</h1>
 
         <button type="button" className={styles.iconButton} aria-label="Filtrer">
           <IconFilter className={styles.icon} />
@@ -88,7 +97,7 @@ export function Results() {
       {state.status === 'success' && state.results.length === 0 && (
         <div className={styles.emptyBox}>
           <p className={styles.emptyText}>
-            Aucune pharmacie n'a été trouvée pour « {query} ». Essayez un autre médicament ou
+            Aucune pharmacie n'a été trouvée pour « {displayTerm} ». Essayez un autre médicament ou
             vérifiez l'orthographe.
           </p>
         </div>
