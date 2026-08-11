@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { fetchSearch, type SearchResult } from '../lib/api';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { PharmacyCard } from '../components/PharmacyCard';
-import { IconChevronLeft, IconFilter } from '../components/icons';
+import { IconChevronLeft, IconFilter, IconListView, IconMap } from '../components/icons';
 import styles from './Results.module.css';
 
 type RequestState =
@@ -11,17 +11,20 @@ type RequestState =
   | { status: 'error' }
   | { status: 'success'; results: SearchResult[] };
 
+type ResultsView = 'list' | 'map';
+
 /**
  * Results screen (docs/figma-inspection.md, Screen 5 — NOT INSPECTED in
  * Figma, see PharmacyCard's tier-badge comment; built from
  * `design-refs/Vue Liste-Résultat des recherches.svg` /
- * `results-list.png`). FT-6 Block A wired the E2E search call; this is
- * Block B, replacing the raw JSON dump with styled cards.
+ * `results-list.png`). FT-6 Block A wired the E2E search call; Block B
+ * replaced the raw JSON dump with styled cards; Block G (this file) adds the
+ * Liste/Maps view toggle from `design-refs/Vue Maps-Résultat des
+ * recherches*.svg`.
  *
- * The OUVERTE/FERMÉE/"De garde"/"Liste"-"Maps" toggle and filter-popup
- * content from the Figma frame have no backing data or functionality yet
- * (no opening-hours fields, no map view, no filter logic) — per CLAUDE.md's
- * critical-path scope, only the filter *icon* is rendered, inert.
+ * The filter-popup content from the Figma frame still has no backing logic
+ * — per CLAUDE.md's critical-path scope, only the filter *icon* is
+ * rendered, inert.
  */
 export function Results() {
   const navigate = useNavigate();
@@ -40,6 +43,9 @@ export function Results() {
   const displayTerm = medicationId !== undefined ? `${inn} ${strength ?? ''}`.trim() : query;
 
   const [state, setState] = useState<RequestState>({ status: 'loading' });
+  // Liste/Maps toggle (Block G). Session state only, no URL param, resets to
+  // 'list' on every fresh navigation to /results.
+  const [view, setView] = useState<ResultsView>('list');
 
   const runSearch = useCallback(() => {
     setState({ status: 'loading' });
@@ -79,7 +85,30 @@ export function Results() {
         </button>
       </header>
 
-      {state.status === 'success' && (
+      <div className={styles.viewToggle} role="tablist" aria-label="Affichage des résultats">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === 'list'}
+          className={view === 'list' ? styles.toggleButtonActive : styles.toggleButton}
+          onClick={() => setView('list')}
+        >
+          <IconListView className={styles.toggleIcon} />
+          Liste
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === 'map'}
+          className={view === 'map' ? styles.toggleButtonActive : styles.toggleButton}
+          onClick={() => setView('map')}
+        >
+          <IconMap className={styles.toggleIcon} />
+          Maps
+        </button>
+      </div>
+
+      {state.status === 'success' && view === 'list' && (
         <p className={styles.count}>{pharmacyCount} pharmacies trouvées</p>
       )}
 
@@ -94,7 +123,7 @@ export function Results() {
         </div>
       )}
 
-      {state.status === 'success' && state.results.length === 0 && (
+      {state.status === 'success' && view === 'list' && state.results.length === 0 && (
         <div className={styles.emptyBox}>
           <p className={styles.emptyText}>
             Aucune pharmacie n'a été trouvée pour « {displayTerm} ». Essayez un autre médicament ou
@@ -103,7 +132,7 @@ export function Results() {
         </div>
       )}
 
-      {state.status === 'success' && state.results.length > 0 && (
+      {state.status === 'success' && view === 'list' && state.results.length > 0 && (
         <ul className={styles.list}>
           {state.results.map((result) => (
             <li key={`${result.pharmacy_id}-${result.medication_id}`}>
@@ -111,6 +140,12 @@ export function Results() {
             </li>
           ))}
         </ul>
+      )}
+
+      {state.status === 'success' && view === 'map' && (
+        <div className={styles.mapFrame}>
+          <div className={styles.mapPlaceholder}>Carte (à venir)</div>
+        </div>
       )}
     </main>
   );

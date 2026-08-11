@@ -161,3 +161,56 @@ export function IconCheck({ className }: IconProps) {
     </svg>
   );
 }
+
+/**
+ * Icons added for the Results map view (Block G, `design-refs/Vue Maps-*.svg`
+ * — same flattened-glyph situation as the other design-ref exports, so these
+ * are redraws in the shared thin-stroke style rather than lifted paths.
+ */
+
+/** "Liste" toggle icon, a plain hamburger/list glyph. */
+export function IconListView({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** "Maps" toggle icon, a folded paper map. */
+export function IconMap({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M4 7.5l5-2 6 2 5-2v11l-5 2-6-2-5 2V7.5Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path d="M9 5.5v11M15 7.5v11" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+/** Close ("x") button on the selected-pin popover card. */
+export function IconClose({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Bookmark button on the selected-pin popover card (visual only, MVP). */
+export function IconBookmark({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4V4.5Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

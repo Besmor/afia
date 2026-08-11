@@ -57,6 +57,78 @@
   white-space: nowrap;
 }
 
+/*
+ * Liste/Maps segmented toggle (Block G, `Vue Maps-Résultat des
+ * recherches.svg`): a pill-shaped container with an inset active pill,
+ * reusing --radius-circle so both the outer track and the active segment
+ * read as fully rounded at this height, matching the Figma frame.
+ */
+.viewToggle {
+  display: flex;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  border: 1px solid var(--color-gray-02-30);
+  border-radius: var(--radius-circle);
+  background: var(--color-gray-02-10);
+  margin-bottom: var(--spacing-xl);
+}
+
+.toggleButton,
+.toggleButtonActive {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-circle);
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.toggleButton {
+  background: transparent;
+  color: var(--color-gray-02-60);
+}
+
+.toggleButtonActive {
+  background: var(--color-primary-01);
+  color: var(--color-gray-02-10);
+}
+
+.toggleIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/*
+ * Map view frame. `calc()` approximates the viewport left over below the
+ * header/toggle/page padding above it; not measured pixel-for-pixel against
+ * their real rendered height (there is no ResizeObserver wiring here) but
+ * close enough for the local-demo MVP per CLAUDE.md's critical-path scope.
+ */
+.mapFrame {
+  height: calc(100vh - 260px);
+  min-height: 380px;
+}
+
+.mapPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border: 1px dashed var(--color-gray-02-40);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-02-20);
+  color: var(--color-gray-02-60);
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .count {
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-medium);
