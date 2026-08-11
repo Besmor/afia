@@ -195,9 +195,10 @@ function SelectedPharmacyCard({ result, userLat, userLon, onClose }: SelectedPha
         {/* Bookmarking is visual only for the MVP (out of critical-path scope, CLAUDE.md). */}
         <button
           type="button"
-          className={styles.iconCircleButton}
+          className={styles.iconCircleButtonDisabled}
           aria-disabled="true"
           aria-label="Enregistrer (bientôt disponible)"
+          title="Fonction à venir"
           onClick={(event) => event.preventDefault()}
         >
           <IconBookmark className={styles.iconCircleGlyph} />

@@ -306,8 +306,25 @@
   cursor: pointer;
 }
 
-.iconCircleButton[aria-disabled='true'] {
-  opacity: 0.6;
+/*
+ * Bookmark button: visual-only, no backing feature (MVP scope, CLAUDE.md).
+ * Kept as a distinct class rather than the [aria-disabled] attribute
+ * selector so its low opacity reads as clearly non-functional at a glance,
+ * with no hover affordance implying otherwise.
+ */
+.iconCircleButtonDisabled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-secondary-02);
+  color: var(--color-primary-02);
+  text-decoration: none;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
