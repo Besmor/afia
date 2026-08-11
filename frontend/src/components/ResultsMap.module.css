@@ -113,3 +113,185 @@
   border-top: 7px solid var(--color-primary-01);
   margin-top: -1px;
 }
+
+/*
+ * Selected-pin popover card, from `Vue Maps-Résultat des recherches-
+ * Pharmacie sélectionné.svg`. Sits in .overlayTop below the banner (see
+ * ResultsMap.tsx); statusOpen/statusClosed/onCallBadge/stockPill duplicate
+ * PharmacyCard.module.css's pill styling — same duplication precedent as
+ * PharmacyDetail.module.css, kept as plain CSS rather than a shared class
+ * across modules.
+ */
+.card {
+  position: relative;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border-radius: 20px;
+  background: var(--color-gray-02-10);
+  box-shadow: 0 8px 24px rgba(10, 10, 10, 0.2);
+  font-family: 'Manrope', sans-serif;
+}
+
+.cardClose {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-gray-02-20);
+  cursor: pointer;
+}
+
+.cardCloseIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-gray-02-70);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding-right: 28px;
+}
+
+.cardCross {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-main);
+}
+
+.cardTitleBlock {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardName {
+  font-size: 15px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-02-100);
+  text-transform: uppercase;
+  line-height: var(--line-height-base);
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-02-70);
+  margin-top: 2px;
+}
+
+.cardPinIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-gray-02-60);
+}
+
+.cardDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-gray-02-60);
+}
+
+.statusOpen,
+.statusClosed,
+.onCallBadge {
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.statusOpen {
+  background: var(--color-primary-01);
+  color: var(--color-gray-02-10);
+}
+
+.statusClosed {
+  background: var(--color-danger);
+  color: var(--color-gray-02-10);
+}
+
+.onCallBadge {
+  background: var(--color-accent-05);
+  color: var(--color-gray-02-100);
+}
+
+.cardStockRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.stockPill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-02);
+  color: var(--color-gray-02-90);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+}
+
+.stockIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.cardPrice {
+  font-size: var(--font-size-title2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-02-100);
+  white-space: nowrap;
+}
+
+.cardActionsRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
+
+.iconCircleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-secondary-02);
+  color: var(--color-primary-02);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.iconCircleButton[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.iconCircleGlyph {
+  width: 18px;
+  height: 18px;
+}
