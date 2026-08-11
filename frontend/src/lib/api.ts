@@ -13,6 +13,7 @@ export interface SearchResult {
   pharmacy_id: string;
   pharmacy_name: string;
   district: string;
+  phone?: string | null;
   latitude: number;
   longitude: number;
   digital_maturity: string;

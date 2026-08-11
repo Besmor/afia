@@ -173,12 +173,14 @@ function SelectedPharmacyCard({ result, userLat, userLon, onClose }: SelectedPha
         <span className={styles.cardPrice}>{formatPriceGnf(result.price_gnf)}</span>
       </div>
 
-      {/*
-       * Phone intentionally omitted here: SearchResult (backend/app/api/
-       * search.py) carries no phone field, unlike PharmacyDetail's
-       * fetchPharmacy response. Per the task brief, hide the line rather
-       * than firing a second request from this popover just for it.
-       */}
+      {result.phone && (
+        <div className={styles.cardPhoneRow}>
+          <span className={styles.cardPhoneLabel}>Téléphones :</span>
+          <a href={`tel:${result.phone.replace(/\s+/g, '')}`} className={styles.cardPhoneValue}>
+            {result.phone}
+          </a>
+        </div>
+      )}
 
       <div className={styles.cardActionsRow}>
         <a

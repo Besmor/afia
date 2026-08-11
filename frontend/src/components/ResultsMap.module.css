@@ -264,6 +264,26 @@
   white-space: nowrap;
 }
 
+/* Phone line, from `Carte-maps.svg`: grey label, green call link. */
+.cardPhoneRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+}
+
+.cardPhoneLabel {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-02-60);
+}
+
+.cardPhoneValue {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-01);
+  text-decoration: none;
+}
+
 .cardActionsRow {
   display: flex;
   align-items: center;
