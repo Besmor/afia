@@ -110,3 +110,26 @@ invisible. Followups in priority order: (1) show matched brand in the
 secondary line when the match came from brand_names; (2) highlight the
 matched substring; (3) rank INN prefix strictly above INN substring
 strictly above brand substring. Not blocking commit.
+
+**Tuesday evening (Block G + polish):** Built the Results map view per
+Figma "Vue Maps" screens using Leaflet + OSM tiles. Segmented Liste/Maps
+toggle at top of Results, custom DivIcon price pins, popover card on pin
+click with pharmacy meta and "voir la pharmacie" CTA. Three atomic
+commits (1c4646e, 9fce09c, 6b0d896). Followup polish batch in flight to
+add phone line to card (SearchResult was missing phone though DB rows
+are populated), preserve list/map toggle across nav via URL param
+?view=map, and make the visually-disabled bookmark button read as
+disabled at a glance.
+
+**Manual-smoke findings on Block G:** (a) pharmacies rendering in the
+Atlantic / mangrove / uninhabited zones because generate_ecosystem.py
+uses district-centroid bounding boxes with no land mask; deferred to
+Wed morning as task #24, must fix before Doctor 1 sees the map;
+(b) overlapping pins where a pharmacy has multiple SearchResult rows
+at the identical coord; deferred as task #22; (c) Pharmacy Detail's
+own mini-map still shows the "Carte (à venir)" placeholder — this is
+pre-existing and would be a separate Block H.
+
+**DITL scheduling:** Doctor 1 confirmed for Wed 12 Aug (exact time TBC,
+awaiting slot confirmation). Doctor 2 still awaiting reply — could be
+Wed 13 or Thu 14.
