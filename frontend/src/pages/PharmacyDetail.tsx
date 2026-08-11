@@ -4,6 +4,7 @@ import { fetchPharmacy, type PharmacyDetail as PharmacyDetailData, type SearchRe
 import { formatDistance, haversineDistanceMeters } from '../lib/geo';
 import { formatPriceGnf, formatTime } from '../lib/format';
 import { DEFAULT_LOCATION, getUserLocation, type UserLocation } from '../lib/location';
+import { computeStatus } from '../lib/openingStatus';
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -41,10 +42,11 @@ const DAYS_OF_WEEK = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendre
  * so this page does not need a second endpoint to show the medication that
  * was searched for.
  *
- * Per the task brief: no real photos (solid colour block), no live
- * open/closed or "de garde" logic (static placeholders, fast-follow task),
- * no real map (placeholder rectangle), no booking CTA, Moyen de paiement
- * and Avis utilisateurs are out of MVP scope.
+ * Per the task brief: no real photos (solid colour block), no real map
+ * (placeholder rectangle), no booking CTA, Moyen de paiement and Avis
+ * utilisateurs are out of MVP scope. The OUVERTE/FERMÉE/"De garde" status in
+ * the meta row is computed live from `pharmacy.opens_at`/`closes_at`/
+ * `open_on_sunday` (`src/lib/openingStatus.ts`).
  */
 export function PharmacyDetail() {
   const { pharmacyId } = useParams<{ pharmacyId: string }>();
@@ -97,6 +99,9 @@ export function PharmacyDetail() {
     pharmacy && userLocation
       ? haversineDistanceMeters(userLocation.lat, userLocation.lon, pharmacy.latitude, pharmacy.longitude)
       : null;
+  const status = pharmacy
+    ? computeStatus(pharmacy.opens_at, pharmacy.closes_at, pharmacy.open_on_sunday)
+    : null;
 
   return (
     <main className={styles.page}>
@@ -138,10 +143,17 @@ export function PharmacyDetail() {
           <div className={styles.metaRow}>
             {distanceMeters !== null && <span>{formatDistance(distanceMeters)} de vous</span>}
             {distanceMeters !== null && <span className={styles.dot} aria-hidden="true" />}
-            {/* Placeholder: no on-call/open-closed data yet (fast-follow task); static per design. */}
-            <span>De garde</span>
-            <span className={styles.dot} aria-hidden="true" />
-            <span className={styles.statusPill}>OUVERTE</span>
+            {status?.isOnCall && (
+              <>
+                <span className={styles.onCallBadge}>De garde</span>
+                <span className={styles.dot} aria-hidden="true" />
+              </>
+            )}
+            {status && (
+              <span className={status.label === 'OUVERTE' ? styles.statusOpen : styles.statusClosed}>
+                {status.label}
+              </span>
+            )}
             <span className={styles.dot} aria-hidden="true" />
             <span className={styles.closesAt}>
               Ferme à ({formatTime(pharmacy.closes_at)})

@@ -23,6 +23,9 @@ export interface SearchResult {
   quantity: number;
   price_gnf: number;
   last_verified_at: string;
+  opens_at: string;
+  closes_at: string;
+  open_on_sunday: boolean;
 }
 
 export async function fetchSearch(

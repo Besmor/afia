@@ -118,13 +118,29 @@
   background: var(--color-gray-02-60);
 }
 
-.statusPill {
+/* OUVERTE/FERMÉE/De garde pills, computed live by src/lib/openingStatus.ts. */
+.statusOpen,
+.statusClosed,
+.onCallBadge {
   padding: 2px var(--spacing-sm);
   border-radius: var(--radius-pill);
-  background: var(--color-accent-01);
-  color: var(--color-secondary-06);
   font-size: var(--font-size-caption);
   font-weight: var(--font-weight-semibold);
+}
+
+.statusOpen {
+  background: var(--color-primary-01);
+  color: var(--color-gray-02-10);
+}
+
+.statusClosed {
+  background: var(--color-danger);
+  color: var(--color-gray-02-10);
+}
+
+.onCallBadge {
+  background: var(--color-accent-05);
+  color: var(--color-gray-02-100);
 }
 
 .closesAt {

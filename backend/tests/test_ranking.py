@@ -35,6 +35,9 @@ def make_result(
         quantity=quantity,
         price_gnf=5000,
         last_verified_at="2026-08-08T00:00:00",
+        opens_at="08:00:00",
+        closes_at="20:00:00",
+        open_on_sunday=False,
     )
 
 

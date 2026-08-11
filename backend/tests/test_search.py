@@ -80,6 +80,22 @@ def test_search_is_case_insensitive(client: TestClient):
     assert len(upper.json()) > 0
 
 
+def test_results_include_opening_hours_fields(client: TestClient):
+    """Each result carries the pharmacy's opening-hours fields, needed for
+    the OUVERTE/FERMÉE/De garde pills on the Results and Detail screens.
+    """
+    response = client.get("/search", params={"q": "paracetamol"})
+
+    assert response.status_code == 200
+    results = response.json()
+    assert len(results) > 0
+    for result in results:
+        assert {"opens_at", "closes_at", "open_on_sunday"} <= result.keys()
+        assert isinstance(result["opens_at"], str)
+        assert isinstance(result["closes_at"], str)
+        assert isinstance(result["open_on_sunday"], bool)
+
+
 def test_ranking_favours_kaloum_pharmacies_near_kaloum_centroid(client: TestClient):
     """A search from the Kaloum centroid should surface Kaloum pharmacies first.
 

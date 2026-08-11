@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import type { SearchResult } from '../lib/api';
 import { formatDistance, haversineDistanceMeters } from '../lib/geo';
 import { formatPriceGnf } from '../lib/format';
+import { computeStatus } from '../lib/openingStatus';
 import { IconChevronRight, IconPharmacyCross, IconPin, IconStock } from './icons';
 import styles from './PharmacyCard.module.css';
 
@@ -53,10 +54,9 @@ const FALLBACK_TIER_BADGE = { label: 'Maturité inconnue', background: 'var(--co
 /**
  * One pharmacy/stock match on the Results screen. Adapted from the Figma
  * list-row card (`Vue Liste-Résultat des recherches.svg`): the OUVERTE/
- * FERMÉE/"De garde" pills from the design have no backing data in
- * `SearchResult` (no opening-hours or on-call fields are returned by
- * `GET /search`), so that row is replaced with the district, calculated
- * distance and the digital-maturity badge above.
+ * FERMÉE/"De garde" pills are computed live from `result.opens_at`/
+ * `closes_at`/`open_on_sunday` (`src/lib/openingStatus.ts`), alongside the
+ * district, calculated distance and the digital-maturity badge above.
  */
 export function PharmacyCard({ result, userLat, userLon }: PharmacyCardProps) {
   const navigate = useNavigate();
@@ -68,6 +68,7 @@ export function PharmacyCard({ result, userLat, userLon }: PharmacyCardProps) {
     result.longitude,
   );
   const tierBadge = TIER_BADGE[result.digital_maturity] ?? FALLBACK_TIER_BADGE;
+  const status = computeStatus(result.opens_at, result.closes_at, result.open_on_sunday);
 
   function handleClick() {
     const params = new URLSearchParams({ medication_id: String(result.medication_id) });
@@ -96,6 +97,11 @@ export function PharmacyCard({ result, userLat, userLon }: PharmacyCardProps) {
       <div className={styles.meta}>
         <IconPin className={styles.pinIcon} />
         <span>{result.district}</span>
+        <span className={styles.dot} aria-hidden="true" />
+        <span className={status.label === 'OUVERTE' ? styles.statusOpen : styles.statusClosed}>
+          {status.label}
+        </span>
+        {status.isOnCall && <span className={styles.onCallBadge}>De garde</span>}
         <span className={styles.dot} aria-hidden="true" />
         <span>{formatDistance(distanceMeters)}</span>
         <span

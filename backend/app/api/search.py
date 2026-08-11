@@ -38,6 +38,9 @@ class SearchResult(BaseModel):
     quantity: int
     price_gnf: int
     last_verified_at: str
+    opens_at: str
+    closes_at: str
+    open_on_sunday: bool
 
 
 def search_medications(
@@ -94,6 +97,9 @@ def search_medications(
             quantity=stock_item.quantity,
             price_gnf=stock_item.price_gnf,
             last_verified_at=stock_item.last_verified_at.isoformat(),
+            opens_at=pharmacy.opens_at.isoformat(),
+            closes_at=pharmacy.closes_at.isoformat(),
+            open_on_sunday=pharmacy.open_on_sunday,
         )
         for pharmacy, medication, stock_item in rows
     ]
