@@ -46,3 +46,36 @@ export async function fetchSearch(
 
   return response.json() as Promise<SearchResult[]>;
 }
+
+/**
+ * Standalone pharmacy record (`GET /pharmacies/{id}`, `backend/app/api/pharmacies.py`).
+ * No stock/medication data, unlike `SearchResult` — used by the Pharmacy
+ * Detail screen, which is reached both from a search result and (in
+ * principle) directly, so it cannot rely on the search response.
+ */
+export interface PharmacyDetail {
+  id: string;
+  name: string;
+  district: string;
+  latitude: number;
+  longitude: number;
+  digital_maturity: string;
+  phone: string | null;
+  opens_at: string;
+  closes_at: string;
+  open_on_sunday: boolean;
+}
+
+export async function fetchPharmacy(pharmacyId: string): Promise<PharmacyDetail> {
+  const response = await fetch(`/pharmacies/${encodeURIComponent(pharmacyId)}`);
+
+  if (response.status === 404) {
+    throw new Error(`Pharmacy ${pharmacyId} not found`);
+  }
+
+  if (!response.ok) {
+    throw new Error(`Pharmacy request failed with status ${response.status}`);
+  }
+
+  return response.json() as Promise<PharmacyDetail>;
+}

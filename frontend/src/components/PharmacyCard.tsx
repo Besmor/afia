@@ -71,7 +71,13 @@ export function PharmacyCard({ result, userLat, userLon }: PharmacyCardProps) {
 
   function handleClick() {
     const params = new URLSearchParams({ medication_id: String(result.medication_id) });
-    navigate(`/pharmacy/${result.pharmacy_id}?${params.toString()}`);
+    // Full result is also passed as router state, so PharmacyDetail can show
+    // the medication name/stock/price without a second fetch. `medication_id`
+    // stays in the query string too so the route is still meaningful if
+    // shared or opened directly (state would then just be absent).
+    navigate(`/pharmacy/${result.pharmacy_id}?${params.toString()}`, {
+      state: { medicationResult: result },
+    });
   }
 
   return (

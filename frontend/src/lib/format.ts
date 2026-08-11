@@ -14,3 +14,11 @@ export function formatPriceGnf(priceGnf: number): string {
 
   return `${grouped} GNF`;
 }
+
+/**
+ * Strips seconds from a backend `time` field, e.g. `"08:00:00"` -> `"08:00"`
+ * (used by PharmacyDetail's opening-hours list).
+ */
+export function formatTime(time: string): string {
+  return time.slice(0, 5);
+}

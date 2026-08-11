@@ -1,0 +1,379 @@
+/*
+ * Détails pharmacie - Info générales / médicaments (docs/figma-inspection.md
+ * refs: `Détails pharmacie-Info générales.svg`, `pharmacy-detail-info.png`,
+ * `Détails pharmacie-médicaments.svg`, `pharmacy-detail-drug.png`). Page
+ * shell mirrors Results.module.css (centred 480px column, background-01).
+ *
+ * The real photo header, live map, "Réserver votre médicament" CTA and the
+ * Moyen de paiement / Avis utilisateurs tabs from the Figma frame are out of
+ * MVP scope per CLAUDE.md and the FT-8 task brief; see PharmacyDetail.tsx.
+ */
+
+.page {
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-background-01);
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Solid colour block standing in for the real photo carousel (no real
+   pharmacy photos exist; ethics constraint, synthetic data only). */
+.photo {
+  position: relative;
+  height: 220px;
+  background: var(--color-main);
+}
+
+.photoIconButton {
+  position: absolute;
+  top: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius-circle);
+  background: var(--color-gray-02-10);
+  cursor: pointer;
+}
+
+.photoIconButtonLeft {
+  left: var(--spacing-lg);
+}
+
+.photoIconButtonRight {
+  right: var(--spacing-lg);
+}
+
+.photoIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-gray-02-90);
+}
+
+.status {
+  padding: var(--spacing-xl) var(--spacing-2xl) 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-gray-02-70);
+}
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl) var(--spacing-2xl) 0;
+}
+
+.errorText {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-danger);
+}
+
+.retryButton {
+  align-self: flex-start;
+  padding: var(--spacing-sm) var(--spacing-xl);
+  border: 1px solid var(--color-primary-02);
+  border-radius: var(--radius-lg);
+  background: var(--color-gray-02-10);
+  color: var(--color-primary-02);
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.body {
+  padding: var(--spacing-xl) var(--spacing-2xl) var(--spacing-3xl);
+}
+
+.name {
+  font-family: 'Baloo Tamma 2', sans-serif;
+  font-size: 22px;
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-base);
+  color: var(--color-gray-02-100);
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-sm);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-02-70);
+  margin-bottom: var(--spacing-md);
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-gray-02-60);
+}
+
+.statusPill {
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-01);
+  color: var(--color-secondary-06);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+}
+
+.closesAt {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.chevronDownIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.addressRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-title2);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-02-100);
+  margin-bottom: var(--spacing-lg);
+}
+
+.directionsIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--color-primary-02);
+}
+
+.mapPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  border: 1px dashed var(--color-gray-02-40);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-02-20);
+  color: var(--color-gray-02-60);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: var(--spacing-lg);
+}
+
+.medicationBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  background: var(--color-accent-02);
+  color: var(--color-gray-02-90);
+  font-size: 14px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.medicationBannerIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.tabStrip {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--color-gray-02-30);
+  margin-bottom: var(--spacing-xl);
+}
+
+.tab,
+.tabActive,
+.tabDisabled {
+  padding: var(--spacing-sm) 0 var(--spacing-md);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab {
+  color: var(--color-gray-02-70);
+}
+
+.tabActive {
+  color: var(--color-primary-02);
+  border-bottom-color: var(--color-primary-02);
+}
+
+.tabDisabled {
+  color: var(--color-gray-02-50);
+  cursor: not-allowed;
+}
+
+.tabDisabledHint {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
+}
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.sectionHeading {
+  font-size: var(--font-size-title1);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-02-100);
+}
+
+.placeholderText {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-gray-02-70);
+}
+
+.description {
+  font-size: 14px;
+  line-height: var(--line-height-base);
+  color: var(--color-gray-02-80);
+}
+
+.readMoreButton {
+  display: block;
+  margin-top: var(--spacing-xs);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-gray-02-100);
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xl);
+}
+
+.contactLabel {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-02-60);
+  margin-bottom: 2px;
+}
+
+.contactValue {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-02-100);
+}
+
+.callButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-left: auto;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid var(--color-primary-02);
+  border-radius: var(--radius-lg);
+  color: var(--color-primary-02);
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+}
+
+.callIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.hoursList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  list-style: none;
+}
+
+.hoursRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.hoursDay {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-02-100);
+}
+
+.hoursTime {
+  font-weight: 500;
+  color: var(--color-gray-02-70);
+}
+
+.hoursClosed {
+  font-weight: 500;
+  color: var(--color-main-red);
+}
+
+.medicationCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-primary-02);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-02-10);
+}
+
+.medicationName {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-02-100);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stockPill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-02);
+  color: var(--color-gray-02-90);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+}
+
+.stockIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.price {
+  font-size: var(--font-size-title2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-02-100);
+  white-space: nowrap;
+}

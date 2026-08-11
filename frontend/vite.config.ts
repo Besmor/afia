@@ -10,6 +10,7 @@ export default defineConfig({
     // the backend needs no CORS middleware. See src/lib/api.ts.
     proxy: {
       '/search': 'http://localhost:8000',
+      '/pharmacies': 'http://localhost:8000',
     },
   },
 })
