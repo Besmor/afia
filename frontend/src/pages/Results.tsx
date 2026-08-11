@@ -1,22 +1,61 @@
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { fetchSearch, type SearchResult } from '../lib/api';
+import { PrimaryButton } from '../components/PrimaryButton';
+
+type RequestState =
+  | { status: 'loading' }
+  | { status: 'error' }
+  | { status: 'success'; results: SearchResult[] };
 
 /**
- * Placeholder for the results screen (docs/figma-inspection.md, Screen 5 —
- * not yet inspected, see the Figma access blocker noted at the top of that
- * doc). This page only exists so the Landing screen's navigation has
- * somewhere to land; the real implementation is a separate ticket.
+ * Results screen (docs/figma-inspection.md, Screen 5). Wires the E2E search
+ * call for FT-6 Block A: q/user_lat/user_lon come from the URL (set by
+ * Landing.tsx), the raw response is dumped as JSON for now, and the styled
+ * pharmacy card comes in Block B.
  */
 export function Results() {
   const [searchParams] = useSearchParams();
+  const query = searchParams.get('q') ?? '';
+  const userLat = Number(searchParams.get('user_lat'));
+  const userLon = Number(searchParams.get('user_lon'));
+
+  const [state, setState] = useState<RequestState>({ status: 'loading' });
+
+  const runSearch = useCallback(() => {
+    setState({ status: 'loading' });
+
+    fetchSearch(query, userLat, userLon)
+      .then((results) => {
+        setState({ status: 'success', results });
+      })
+      .catch(() => {
+        setState({ status: 'error' });
+      });
+  }, [query, userLat, userLon]);
+
+  useEffect(() => {
+    runSearch();
+  }, [runSearch]);
 
   return (
     <main style={{ padding: 'var(--spacing-2xl)', fontFamily: 'Manrope, sans-serif' }}>
       <h1 style={{ fontFamily: "'Baloo Tamma 2', sans-serif", color: 'var(--color-secondary-04)' }}>
-        Résultats (à venir)
+        {state.status === 'success' ? 'Résultats' : 'Résultats (à venir)'}
       </h1>
-      <p>q = {searchParams.get('q')}</p>
-      <p>user_lat = {searchParams.get('user_lat')}</p>
-      <p>user_lon = {searchParams.get('user_lon')}</p>
+
+      {state.status === 'loading' && <p>Recherche en cours...</p>}
+
+      {state.status === 'error' && (
+        <div>
+          <p style={{ color: 'var(--color-danger)' }}>
+            Impossible de charger les résultats. Vérifiez que le backend tourne sur localhost:8000.
+          </p>
+          <PrimaryButton onClick={runSearch}>Réessayer</PrimaryButton>
+        </div>
+      )}
+
+      {state.status === 'success' && <pre>{JSON.stringify(state.results, null, 2)}</pre>}
     </main>
   );
 }
