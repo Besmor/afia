@@ -30,7 +30,7 @@ type ResultsView = 'list' | 'map';
  */
 export function Results() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') ?? '';
   const userLat = Number(searchParams.get('user_lat'));
   const userLon = Number(searchParams.get('user_lon'));
@@ -51,9 +51,25 @@ export function Results() {
   const displayTerm = medicationId !== undefined ? `${inn} ${strength ?? ''}`.trim() : query;
 
   const [state, setState] = useState<RequestState>({ status: 'loading' });
-  // Liste/Maps toggle (Block G). Session state only, no URL param, resets to
-  // 'list' on every fresh navigation to /results.
-  const [view, setView] = useState<ResultsView>('list');
+  // Liste/Maps toggle (Block G), kept in the `view` URL param so browser
+  // Back from Pharmacy Detail restores the view the user was on rather than
+  // always resetting to 'list'.
+  const view: ResultsView = searchParams.get('view') === 'map' ? 'map' : 'list';
+
+  function setView(next: ResultsView) {
+    setSearchParams(
+      (previous) => {
+        const params = new URLSearchParams(previous);
+        if (next === 'map') {
+          params.set('view', 'map');
+        } else {
+          params.delete('view');
+        }
+        return params;
+      },
+      { replace: true },
+    );
+  }
 
   const runSearch = useCallback(() => {
     setState({ status: 'loading' });
