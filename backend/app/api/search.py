@@ -28,6 +28,7 @@ class SearchResult(BaseModel):
     pharmacy_id: str
     pharmacy_name: str
     district: str
+    phone: str | None = None
     latitude: float
     longitude: float
     digital_maturity: str
@@ -52,6 +53,7 @@ def _rows_to_results(
             pharmacy_id=pharmacy.id,
             pharmacy_name=pharmacy.name,
             district=pharmacy.district.value,
+            phone=pharmacy.phone,
             latitude=pharmacy.latitude,
             longitude=pharmacy.longitude,
             digital_maturity=pharmacy.digital_maturity.value,
