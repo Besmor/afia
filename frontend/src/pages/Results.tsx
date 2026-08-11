@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { fetchSearch, type SearchResult } from '../lib/api';
+import { DEFAULT_LOCATION } from '../lib/location';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { PharmacyCard } from '../components/PharmacyCard';
+import { ResultsMap } from '../components/ResultsMap';
 import { IconChevronLeft, IconFilter, IconListView, IconMap } from '../components/icons';
 import styles from './Results.module.css';
 
@@ -32,6 +34,12 @@ export function Results() {
   const query = searchParams.get('q') ?? '';
   const userLat = Number(searchParams.get('user_lat'));
   const userLon = Number(searchParams.get('user_lon'));
+  // ResultsMap needs a always-valid centre even if this page were opened
+  // directly without user_lat/user_lon (PharmacyCard's list rendering
+  // already tolerates NaN here unchanged, so only the new map path guards
+  // against it).
+  const mapUserLat = Number.isFinite(userLat) ? userLat : DEFAULT_LOCATION.lat;
+  const mapUserLon = Number.isFinite(userLon) ? userLon : DEFAULT_LOCATION.lon;
 
   // Precise path (Block F): Landing's autocomplete + dose picker navigates
   // here with medication_id/strength/inn instead of a free-text q.
@@ -144,7 +152,7 @@ export function Results() {
 
       {state.status === 'success' && view === 'map' && (
         <div className={styles.mapFrame}>
-          <div className={styles.mapPlaceholder}>Carte (à venir)</div>
+          <ResultsMap results={state.results} userLat={mapUserLat} userLon={mapUserLon} />
         </div>
       )}
     </main>

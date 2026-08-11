@@ -116,19 +116,6 @@
   min-height: 380px;
 }
 
-.mapPlaceholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  border: 1px dashed var(--color-gray-02-40);
-  border-radius: var(--radius-md);
-  background: var(--color-gray-02-20);
-  color: var(--color-gray-02-60);
-  font-size: 14px;
-  font-weight: 500;
-}
-
 .count {
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-medium);
