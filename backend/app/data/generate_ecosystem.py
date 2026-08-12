@@ -26,6 +26,36 @@ OUT_DIR = REPO_ROOT / "data" / "synthetic"
 
 DEFAULT_SEED = 20260806
 
+# Curated, land-based coordinates, one per synthetic pharmacy id.
+#
+# `conakry_district_bounds.json` only has coarse per-district bounding boxes
+# (see its `_meta.note`), not real commune polygons, so uniform-sampling a
+# lat/lon inside a box can and did land in the Atlantic, mangrove, or other
+# uninhabited ground (surfaced during Block G's manual map smoke ahead of the
+# DITL doctor). Point-in-polygon sampling (the preferred fix) is not
+# available without commune polygon geometry, which is out of scope to fetch
+# under the current deadline, so each pharmacy is pinned instead to a named,
+# real, populated Conakry neighbourhood inside its already-assigned district's
+# bounding box. District and digital-maturity assignment per pharmacy id are
+# unchanged from the scan; only the coordinate sampling strategy changes.
+KNOWN_PHARMACY_COORDS: dict[str, tuple[float, float]] = {
+    "Pharmacy_01": (9.535, -13.685),  # Unknown district -> Coleah, near Stade du 28 Septembre
+    "Pharmacy_02": (9.508, -13.714),  # Kaloum -> Boulbinet
+    "Pharmacy_03": (9.575, -13.645),  # Ratoma -> Kipe
+    "Pharmacy_04": (9.512, -13.706),  # Kaloum -> Sandervalia
+    "Pharmacy_05": (9.590, -13.630),  # Ratoma -> Bellevue
+    "Pharmacy_06": (9.545, -13.675),  # Dixinn -> Cite des Nations
+    "Pharmacy_07": (9.605, -13.615),  # Ratoma -> Nongo
+    "Pharmacy_08": (9.580, -13.638),  # Ratoma -> Kobaya
+    "Pharmacy_09": (9.598, -13.622),  # Ratoma -> Simbaya
+    "Pharmacy_10": (9.612, -13.608),  # Ratoma -> Sonfonia
+    "Pharmacy_11": (9.583, -13.648),  # Ratoma -> Taouyah
+    "Pharmacy_12": (9.595, -13.635),  # Ratoma -> Lambanyi
+    "Pharmacy_13": (9.608, -13.618),  # Ratoma -> Kaporo
+    "Pharmacy_14": (9.516, -13.719),  # Kaloum -> near Palais du Peuple
+    "Pharmacy_15": (9.519, -13.702),  # Kaloum -> Marche Niger
+}
+
 # Tier-adjusted stock-freshness windows (hours old)
 FRESHNESS_HOURS_BY_TIER = {
     "API_LINKED": (0, 1),
@@ -67,8 +97,13 @@ def generate_pharmacies(scan: list[dict], districts: dict, rng: random.Random) -
     pharmacies: list[dict] = []
     for record in scan:
         bounds = districts[record["district"]]
-        lat = rng.uniform(bounds["lat_min"], bounds["lat_max"])
-        lon = rng.uniform(bounds["lon_min"], bounds["lon_max"])
+        # Still draw (and discard) from the bounding box so the rest of the
+        # deterministic rng stream below (opening hours, then stock sampling
+        # in generate_stock) is unaffected by the coordinate-source change
+        # above; only the coordinates themselves are fixed to curated points.
+        rng.uniform(bounds["lat_min"], bounds["lat_max"])
+        rng.uniform(bounds["lon_min"], bounds["lon_max"])
+        lat, lon = KNOWN_PHARMACY_COORDS[record["id"]]
 
         # Operating hours: default 08:00-20:00, slight variation
         open_hour = 8 + rng.choice([0, 0, 0, 1])  # mostly 08:00, sometimes 09:00
