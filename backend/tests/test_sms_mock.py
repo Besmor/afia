@@ -70,8 +70,13 @@ def test_typo_medication_returns_french_fallback(session: Session):
 
 
 def test_unknown_brand_returns_french_fallback(session: Session):
-    """DITL Reviewer 1 bug: a brand outside the catalogue ("mixtard") no longer replies in English."""
-    message = respond(session, "mixtard")
+    """A brand outside the catalogue triggers the French fallback rather than an English default.
+
+    DITL Reviewer 1 originally spotted this bug with 'mixtard' (which is now in the seed).
+    Uses 'zoloft' (a real antidepressant brand deliberately not carried by the Afia catalogue,
+    which is scoped to WHO EML essentials) to keep the assertion meaningful.
+    """
+    message = respond(session, "zoloft")
 
     assert message == FALLBACK_MESSAGE
 
