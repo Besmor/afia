@@ -18,7 +18,13 @@ from sqlalchemy.orm import Session
 
 from app.data.seed_db import SYNTHETIC_DIR, seed_all
 from app.models.pharmacy import Base
-from app.services.sms_mock import FALLBACK_MESSAGE, SMS_MAX_CHARS, parse_dose, respond
+from app.services.sms_mock import (
+    FALLBACK_MESSAGE,
+    SMS_MAX_CHARS,
+    SYMPTOM_MESSAGE,
+    parse_dose,
+    respond,
+)
 
 
 @pytest.fixture()
@@ -68,6 +74,27 @@ def test_unknown_brand_returns_french_fallback(session: Session):
     message = respond(session, "mixtard")
 
     assert message == FALLBACK_MESSAGE
+
+
+def test_symptom_query_with_accents_returns_safety_reply(session: Session):
+    message = respond(session, "j'ai mal à la tête")
+
+    assert message == SYMPTOM_MESSAGE
+
+
+def test_symptom_query_unaccented_returns_safety_reply(session: Session):
+    """Same safety reply when accents/apostrophes are dropped, as SMS input often is."""
+    message = respond(session, "jai mal tete")
+
+    assert message == SYMPTOM_MESSAGE
+
+
+def test_medication_query_does_not_trigger_symptom_branch(session: Session):
+    """Regression: a plain medication name must not be mistaken for a symptom query."""
+    message = respond(session, "paracétamol")
+
+    assert message != SYMPTOM_MESSAGE
+    assert message.startswith("Paracetamol:")
 
 
 def test_response_stays_under_sms_length_limit(session: Session):

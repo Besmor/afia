@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import logging
 import re
+import unicodedata
 from pathlib import Path
 
 from sqlalchemy import select
@@ -46,6 +47,33 @@ FALLBACK_MESSAGE = (
     "Afia n'a pas reconnu ce médicament. Vérifiez l'orthographe ou "
     "envoyez le nom exact (ex: paracétamol). Afia ne remplace pas votre "
     "pharmacien."
+)
+
+# Symptom-query safety reply: shown instead of FALLBACK_MESSAGE when the text
+# looks like a symptom description rather than an unrecognised medication
+# name (see SYMPTOM_PATTERN). Ethics-critical per DITL Reviewer 1 (P0):
+# Doctor 1 flagged that suggesting a medication for a symptom risks steering
+# a user towards something contraindicated (e.g. pregnancy) or masking an
+# underlying condition (e.g. hypertension headaches), so Afia must defer to
+# a clinician rather than guess.
+SYMPTOM_MESSAGE = (
+    "Afia ne propose pas de médicament pour un symptôme. Consultez votre "
+    "médecin ou pharmacien. Envoyez ensuite le nom du médicament prescrit "
+    "pour vérifier les stocks."
+)
+
+# French symptom keywords (case-insensitive, word boundary), per the Block G
+# fix brief. Both accented and unaccented spellings are listed since SMS
+# input arrives without reliable accents (e.g. "jai mal tete").
+SYMPTOM_KEYWORDS = (
+    "mal", "douleur", "fièvre", "fievre", "tousse", "toux", "saigne",
+    "saignement", "vomi", "vomissement", "nausée", "nausee", "diarrhée",
+    "diarrhee", "brûlure", "brulure", "gorge", "ventre", "tête", "tete",
+    "dos", "jambe", "oreille",
+)
+SYMPTOM_PATTERN = re.compile(
+    r"\b(?:" + "|".join(re.escape(keyword) for keyword in SYMPTOM_KEYWORDS) + r")\b",
+    re.IGNORECASE,
 )
 
 # Matches a dose token anywhere in the SMS text, e.g. "500mg", "0.5g",
@@ -150,6 +178,19 @@ def _display_dose(medication: Medication) -> str:
     return f"{label} {compact}" if label else compact
 
 
+def _fold_accents(text: str) -> str:
+    """Lowercase `text` and strip accents, e.g. "Paracétamol" -> "paracetamol".
+
+    Used for catalogue-name comparison only (never for a value shown back to
+    the user), so SMS input arriving with or without accents matches the
+    same catalogue row. Discovered while wiring up the symptom-vs-medication
+    priority check below: unaccented input already matched, but the
+    natural French spelling ("paracétamol") did not.
+    """
+    decomposed = unicodedata.normalize("NFKD", text.lower())
+    return "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+
+
 def _medications_for_inn(session: Session, inn: str) -> list[Medication]:
     """All catalogue rows sharing `inn` exactly, ordered by id (the dose siblings of a match)."""
     stmt = select(Medication).where(Medication.inn == inn).order_by(Medication.id)
@@ -162,17 +203,19 @@ def match_medication(session: Session, text: str) -> Medication | None:
     Catalogue matching only, per CLAUDE.md's "NLP parser is intentionally
     light" principle: no tokenisation or fuzzy matching. Candidate names are
     checked longest-first so a short brand name can't pre-empt a longer, more
-    specific match earlier in table order.
+    specific match earlier in table order. Accents are folded on both sides
+    (e.g. "paracétamol" matches catalogue "Paracetamol") since SMS input is
+    French and accents are typed inconsistently on feature phones.
     """
-    normalised = text.lower()
+    normalised = _fold_accents(text)
 
     candidates: list[tuple[str, Medication]] = []
     for medication in session.execute(select(Medication)).scalars():
-        candidates.append((medication.inn.lower(), medication))
+        candidates.append((_fold_accents(medication.inn), medication))
         for brand in (medication.brand_names or "").split(","):
-            brand = brand.strip().lower()
+            brand = brand.strip()
             if brand:
-                candidates.append((brand, medication))
+                candidates.append((_fold_accents(brand), medication))
 
     candidates.sort(key=lambda pair: len(pair[0]), reverse=True)
     for name, medication in candidates:
@@ -221,9 +264,13 @@ def respond(session: Session, text: str) -> str:
     """Build the SMS reply for an inbound `text` query, logging the exchange.
 
     Matches `text` against the medication catalogue (after stripping any dose
-    token, see `parse_dose`), then branches three ways:
+    token, see `parse_dose`), then branches:
 
-    - No INN matched at all: `FALLBACK_MESSAGE`.
+    - No INN matched, but the text looks like a symptom description (see
+      `SYMPTOM_PATTERN`): `SYMPTOM_MESSAGE`. Checked before the generic
+      fallback so a described symptom is never treated as a typo'd
+      medication name (ethics-critical, see DITL Reviewer 1 P0).
+    - No INN matched at all, and no symptom keyword either: `FALLBACK_MESSAGE`.
     - INN matched, no dose token: French ask-back listing the doses that
       exist for that INN.
     - INN matched, dose token given but it matches no catalogue row for that
@@ -231,6 +278,11 @@ def respond(session: Session, text: str) -> str:
     - INN matched, dose token matches a catalogue row: the existing top-3
       pharmacy list (`format_response`), filtered to that exact INN+strength
       via `search_by_medication` rather than the free-text `search_medications`.
+
+    A medication match always wins over a symptom-looking query (priority
+    order: medication, then symptom, then generic unknown fallback), so e.g.
+    "paracetamol" alone still asks for a dose rather than tripping the
+    symptom branch just because "mal" also matches nothing here.
     """
     logger = _get_logger()
     logger.info("REQUEST: %s", text)
@@ -238,6 +290,9 @@ def respond(session: Session, text: str) -> str:
     stripped_text, dose = parse_dose(text)
     medication = match_medication(session, stripped_text)
     if medication is None:
+        if SYMPTOM_PATTERN.search(text):
+            logger.info("RESPONSE: %s", SYMPTOM_MESSAGE)
+            return SYMPTOM_MESSAGE
         logger.info("RESPONSE: %s", FALLBACK_MESSAGE)
         return FALLBACK_MESSAGE
 
