@@ -122,7 +122,10 @@ export function MedicationSearch({
 
   function selectMedication(result: AutocompleteResult) {
     onMedicationChange(result);
-    onDoseChange(null);
+    // Preselect the dose to the strength the user just visually picked
+    // (Reviewer 1: re-opening the picker to choose it again is redundant
+    // friction). Still overridable via the dose dropdown below.
+    onDoseChange(result);
     onQueryChange(result.inn);
     setDropdownOpen(false);
     setActiveIndex(-1);
