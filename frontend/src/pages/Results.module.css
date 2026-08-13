@@ -51,7 +51,11 @@
   font-size: 20px;
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-base);
-  color: var(--color-secondary-04);
+  /* Was --color-secondary-04 (green), which blended into the green
+     background-01: Doctor 1's eyes went straight past it to the pharmacy
+     list. --color-gray-02-100 is the dark text token used for headings
+     elsewhere (PharmacyCard, ResultsMap, MedicationSearch). */
+  color: var(--color-gray-02-100);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
