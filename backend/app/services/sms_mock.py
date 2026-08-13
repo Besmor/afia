@@ -38,9 +38,14 @@ SMS_MAX_CHARS = 500
 # caps the pharmacy-list branch, per the Block F brief (<= 320 chars total).
 SMS_ASK_BACK_MAX_CHARS = 320
 
+# Unknown-medication fallback: no INN or brand name matched at all (covers
+# typos, e.g. "amoxicilin", and brands outside the catalogue, e.g.
+# "mixtard"). French per DITL Reviewer 1 (P0): Doctor 1 saw the old English
+# string on exactly these two cases.
 FALLBACK_MESSAGE = (
-    "Afia: type a medication name (e.g. 'paracetamol') to find nearby "
-    "pharmacies with stock."
+    "Afia n'a pas reconnu ce médicament. Vérifiez l'orthographe ou "
+    "envoyez le nom exact (ex: paracétamol). Afia ne remplace pas votre "
+    "pharmacien."
 )
 
 # Matches a dose token anywhere in the SMS text, e.g. "500mg", "0.5g",
@@ -177,11 +182,11 @@ def match_medication(session: Session, text: str) -> Medication | None:
 
 
 def format_response(medication_name: str, results: list[SearchResult]) -> str:
-    """Format ranked search results as a plain-text SMS reply."""
+    """Format ranked search results as a plain-text SMS reply (French, user-facing)."""
     if not results:
-        return f"Afia: no pharmacies currently have {medication_name} in stock."
+        return f"Afia: aucune pharmacie n'a actuellement {medication_name} en stock."
 
-    lines = [f"Afia — {len(results)} pharmacies for {medication_name}:"]
+    lines = [f"Afia — {len(results)} pharmacies pour {medication_name}:"]
     for result in results:
         distance_km = (
             walking_distance_m(
@@ -191,7 +196,7 @@ def format_response(medication_name: str, results: list[SearchResult]) -> str:
         )
         lines.append(f"{result.pharmacy_name} ({result.district})")
         lines.append(
-            f"  Stock: {result.quantity} | Price: {result.price_gnf} GNF | ~{distance_km:.1f} km"
+            f"  Stock: {result.quantity} | Prix: {result.price_gnf} GNF | ~{distance_km:.1f} km"
         )
     return "\n".join(lines)
 
@@ -218,7 +223,7 @@ def respond(session: Session, text: str) -> str:
     Matches `text` against the medication catalogue (after stripping any dose
     token, see `parse_dose`), then branches three ways:
 
-    - No INN matched at all: `FALLBACK_MESSAGE` (unchanged from before Block F).
+    - No INN matched at all: `FALLBACK_MESSAGE`.
     - INN matched, no dose token: French ask-back listing the doses that
       exist for that INN.
     - INN matched, dose token given but it matches no catalogue row for that
