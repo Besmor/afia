@@ -25,7 +25,7 @@ type TabKey = 'medicaments' | 'infos';
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'medicaments', label: 'Médicaments' },
-  { key: 'infos', label: 'Infos Générales' },
+  { key: 'infos', label: 'Infos pharmacie' },
 ];
 
 /** Tabs shown per the Figma frame but out of MVP scope (CLAUDE.md critical path). */
@@ -251,8 +251,8 @@ export function PharmacyDetail() {
           )}
 
           {activeTab === 'infos' && (
-            <section className={styles.tabContent} aria-label="Infos Générales">
-              <h2 className={styles.sectionHeading}>Infos Générales</h2>
+            <section className={styles.tabContent} aria-label="Infos pharmacie">
+              <h2 className={styles.sectionHeading}>Infos pharmacie</h2>
               <p className={styles.description}>
                 {descriptionExpanded
                   ? "Description détaillée à venir. Cette pharmacie fait partie de l'écosystème synthétique Afia, calibré sur le scan de maturité numérique de Conakry."
