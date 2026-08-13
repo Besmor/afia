@@ -26,6 +26,8 @@ interface ResultsMapProps {
   results: SearchResult[];
   userLat: number;
   userLon: number;
+  /** Matched brand from Landing's autocomplete, forwarded to Détail (Task #30). */
+  brand?: string;
 }
 
 /** Only the top N results get a pin; matches the `limit=10` Results.tsx already asks the API for. */
@@ -109,6 +111,7 @@ interface SelectedPharmacyCardProps {
   userLat: number;
   userLon: number;
   onClose: () => void;
+  brand?: string;
 }
 
 /**
@@ -116,7 +119,7 @@ interface SelectedPharmacyCardProps {
  * recherches-Pharmacie sélectionné.svg`. Reuses the same status/distance/
  * price helpers as PharmacyCard (Results list view).
  */
-function SelectedPharmacyCard({ result, userLat, userLon, onClose }: SelectedPharmacyCardProps) {
+function SelectedPharmacyCard({ result, userLat, userLon, onClose, brand }: SelectedPharmacyCardProps) {
   const navigate = useNavigate();
 
   const distanceMeters = haversineDistanceMeters(userLat, userLon, result.latitude, result.longitude);
@@ -133,6 +136,7 @@ function SelectedPharmacyCard({ result, userLat, userLon, onClose }: SelectedPha
     // Same pattern as PharmacyCard.tsx: medication_id stays in the query
     // string for a shareable/directly-openable URL, full result also
     // travels as router state so Detail needs no second fetch for it.
+    if (brand) params.set('brand', brand);
     navigate(`/pharmacy/${result.pharmacy_id}?${params.toString()}`, {
       state: { medicationResult: result },
     });
@@ -216,7 +220,7 @@ function SelectedPharmacyCard({ result, userLat, userLon, onClose }: SelectedPha
  * marker and one green price pin per result; clicking a pin opens
  * `SelectedPharmacyCard` above the map.
  */
-export function ResultsMap({ results, userLat, userLon }: ResultsMapProps) {
+export function ResultsMap({ results, userLat, userLon, brand }: ResultsMapProps) {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
   const pins = results.slice(0, MAX_PINS);
@@ -241,6 +245,7 @@ export function ResultsMap({ results, userLat, userLon }: ResultsMapProps) {
             userLat={userLat}
             userLon={userLon}
             onClose={() => setSelectedKey(null)}
+            brand={brand}
           />
         )}
       </div>

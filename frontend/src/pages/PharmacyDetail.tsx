@@ -55,8 +55,15 @@ export function PharmacyDetail() {
   const [searchParams] = useSearchParams();
 
   const medicationId = searchParams.get('medication_id');
+  const brand = searchParams.get('brand');
   const medicationResult =
     (routerLocation.state as { medicationResult?: SearchResult } | null)?.medicationResult ?? null;
+  // Brand only leads the card for the medication that was actually
+  // searched for (Task #30) - guards against a mismatched brand param on a
+  // directly-opened/shared URL.
+  const showBrand =
+    brand !== null && medicationResult !== null && medicationId !== null &&
+    Number(medicationId) === medicationResult.medication_id;
 
   const [state, setState] = useState<RequestState>({ status: 'loading' });
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
@@ -206,10 +213,21 @@ export function PharmacyDetail() {
               {medicationResult ? (
                 <div className={styles.medicationCard}>
                   <div>
-                    <p className={styles.medicationName}>
-                      {medicationResult.medication_inn}, {medicationResult.medication_form},{' '}
-                      {medicationResult.medication_strength}
-                    </p>
+                    {showBrand ? (
+                      <>
+                        <p className={styles.medicationName}>
+                          {brand} {medicationResult.medication_strength}
+                        </p>
+                        <p className={styles.medicationSecondary}>
+                          {medicationResult.medication_inn} · {medicationResult.medication_form}
+                        </p>
+                      </>
+                    ) : (
+                      <p className={styles.medicationName}>
+                        {medicationResult.medication_inn}, {medicationResult.medication_form},{' '}
+                        {medicationResult.medication_strength}
+                      </p>
+                    )}
                     <span className={styles.stockPill}>
                       <IconStock className={styles.stockIcon} />
                       {medicationResult.quantity} en stock

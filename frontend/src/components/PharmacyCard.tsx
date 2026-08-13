@@ -10,6 +10,8 @@ interface PharmacyCardProps {
   result: SearchResult;
   userLat: number;
   userLon: number;
+  /** Matched brand from Landing's autocomplete, forwarded to Détail (Task #30). */
+  brand?: string;
 }
 
 /**
@@ -58,7 +60,7 @@ const FALLBACK_TIER_BADGE = { label: 'Maturité inconnue', background: 'var(--co
  * `closes_at`/`open_on_sunday` (`src/lib/openingStatus.ts`), alongside the
  * district, calculated distance and the digital-maturity badge above.
  */
-export function PharmacyCard({ result, userLat, userLon }: PharmacyCardProps) {
+export function PharmacyCard({ result, userLat, userLon, brand }: PharmacyCardProps) {
   const navigate = useNavigate();
 
   const distanceMeters = haversineDistanceMeters(
@@ -76,6 +78,7 @@ export function PharmacyCard({ result, userLat, userLon }: PharmacyCardProps) {
     // the medication name/stock/price without a second fetch. `medication_id`
     // stays in the query string too so the route is still meaningful if
     // shared or opened directly (state would then just be absent).
+    if (brand) params.set('brand', brand);
     navigate(`/pharmacy/${result.pharmacy_id}?${params.toString()}`, {
       state: { medicationResult: result },
     });

@@ -370,6 +370,15 @@
   margin-bottom: var(--spacing-xs);
 }
 
+/* INN/form secondary line shown under a brand-first medicationName, e.g.
+   "Paracétamol · Comprimé" below "Doliprane 500 mg" (Task #30). */
+.medicationSecondary {
+  font-size: var(--font-size-caption);
+  font-weight: 500;
+  color: var(--color-gray-02-70);
+  margin-bottom: var(--spacing-xs);
+}
+
 .stockPill {
   display: inline-flex;
   align-items: center;
