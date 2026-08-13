@@ -75,6 +75,7 @@ export interface AutocompleteResult {
   inn: string;
   form: string;
   strength: string;
+  matched_brand?: string | null;
 }
 
 export async function fetchAutocomplete(q: string): Promise<AutocompleteResult[]> {
