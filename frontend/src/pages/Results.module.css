@@ -56,9 +56,11 @@
      list. --color-gray-02-100 is the dark text token used for headings
      elsewhere (PharmacyCard, ResultsMap, MedicationSearch). */
   color: var(--color-gray-02-100);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* Wrap long headings ("Résultats pour Paracétamol 500 mg") to a
+    second line instead of ellipsis-clipping. Reviewer 1 pointed out
+    the truncation after the contrast fix landed. */
+  overflow-wrap: anywhere;
+  line-height: 1.2;
 }
 
 /*
