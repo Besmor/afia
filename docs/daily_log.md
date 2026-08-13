@@ -133,3 +133,74 @@ pre-existing and would be a separate Block H.
 **DITL scheduling:** Doctor 1 confirmed for Wed 12 Aug (exact time TBC,
 awaiting slot confirmation). Doctor 2 still awaiting reply — could be
 Wed 13 or Thu 14.
+
+## 2026-08-12 (Wednesday)
+
+**Shipped:** Sea-pharmacies fix (commit e4014eb). Iterated once on
+Pharmacy_01 coord after smoke-testing revealed the initial coord and the
+first fix-attempt both landed in water east of Coléah; final coord
+(9.535, -13.685) confirmed dry across paracetamol / amoxicillin /
+metformin searches.
+
+**DITL Session #1 — Reviewer 1 (~2 hours, planned 45 min).** Ran long
+because the doctor engaged deeply and volunteered substantive feedback
+on almost every screen. Notes saved anonymised in
+`afia/docs/evaluation/DITL Reviewer 1.docx` per DSREC exemption.
+Consent confirmed verbally at start; no audio/video recorded.
+
+**Seven themes surfaced:**
+
+1. Brand names are how Guinean patients actually shop, not INN.
+   "Population n'est pas très instruite, ils achètent ce qui est écrit
+   sur l'ordonnance." Validates our brand-in-catalogue design and the
+   pending autocomplete-brand-hint polish (task #21).
+2. "No result" is a walkaway moment. Doctor explicitly said the
+   unmatched-dose SMS reply would send him to the pharmacy in person
+   rather than retry. Empty-states must soft-land users.
+3. Symptom queries are ethically dangerous. The "j'ai mal à la tête"
+   scenario surfaced concrete risk examples (pregnant woman receives
+   drug suggestion contraindicated for pregnancy; hypertensive patient
+   whose headache is a symptom of the hypertension itself, not a
+   paracetamol case). Platform must never recommend medication for a
+   symptom description. Our current fallback refuses but in English,
+   which is both a bug and a missed safety-framing opportunity.
+4. Visual hierarchy on Results fails. Green "Résultats pour X" heading
+   blends into the green background; doctor's eyes went directly to the
+   pharmacy list.
+5. Map pins carry the wrong signal. Prices are approximately equal
+   across Conakry so price on the pin is noise; distance and pharmacy
+   name are signal.
+6. Filter chips being non-functional is a broken promise. Doctor tried
+   them.
+7. Dose UX has three issues: not always relevant (syrups), most variants
+   missing from the seed (paracetamol comes in 50 / 100 / 150 / 200 /
+   300 / 500 / 1000 mg in Guinea, we have far fewer), and should
+   preselect a sensible default after picking a medication.
+
+**Bugs to fix Wed evening before Doctor 2 (P0 / P1):**
+- #25 SMS fallback in English (three occurrences: "amoxicilin 500mg",
+  "mixtard", "jai mal tete")
+- #28 Symptom-query reply French + safety-aware wording
+- #26 Detail default tab → Médicaments not Infos Générales
+- #27 Results heading contrast
+
+**Bigger findings deferred to dissertation write-up:**
+- Symptom-query safety gap → Ethics + Discussion chapters. This is a
+  real research contribution: DITL surfaced a safety gap that a purely
+  technical evaluation could not have. Cite Hevner et al. (2004)
+  Design Evaluation guideline.
+- Brand-first shopping behaviour → validates middle-layer architecture
+  thesis in Discussion. Bridging brand-generic is precisely what a
+  middle layer is for.
+- Approximately-equal prices → validates ADR-006's 0.6 / 0.2 / 0.2
+  weighting (distance / stock / tier), with price correctly absent
+  from the formula. Doctor's exact wording: "les prix sont
+  approximatifs, similaires, c'est surtout la proximité qui prime."
+- Scan-a-prescription feature suggestion → documented as future work.
+- 24h pharmacies and inconsistent on-call adherence → documented as
+  future work; the FERMÉE / OUVERTE pill is useful, the "De garde"
+  pill is contested because on-call schedules aren't always respected
+  in practice.
+
+**Doctor 2 scheduling:** still not confirmed. User will remind Thursday
+morning.
