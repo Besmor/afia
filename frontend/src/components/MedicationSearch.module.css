@@ -74,9 +74,10 @@
   color: var(--color-gray-02-70);
 }
 
-/* Brand name that matched the query, when the row didn't match on its INN
-   (e.g. "Glucophage" for Metformin). Italic to read as an aside rather than
-   part of the form/strength facts either side of it. */
+/* Parenthetical aside on a brand-first row: the INN sits here once the
+   matched brand (e.g. "Doliprane" for Paracétamol) has taken the primary
+   slot. Italic to read as an aside rather than part of the form/strength
+   facts either side of it. */
 .rowBrand {
   font-style: italic;
 }

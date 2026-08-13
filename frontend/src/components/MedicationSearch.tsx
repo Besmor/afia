@@ -229,13 +229,13 @@ export function MedicationSearch({
                     <IconDrop className={styles.rowIcon} />
                   )}
                   <span className={styles.rowText}>
-                    <span className={styles.rowInn}>{suggestion.inn}</span>
+                    <span className={styles.rowInn}>{suggestion.matched_brand ?? suggestion.inn}</span>
                     <span className={styles.rowSecondary}>
                       {formLabelFr(suggestion.form)} · {suggestion.strength}
                       {suggestion.matched_brand && (
                         <>
                           {' · '}
-                          <span className={styles.rowBrand}>({suggestion.matched_brand})</span>
+                          <span className={styles.rowBrand}>({suggestion.inn})</span>
                         </>
                       )}
                     </span>
