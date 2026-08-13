@@ -11,11 +11,12 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from sqlalchemy import func, or_, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.session import get_session
 from app.models.pharmacy import Medication
+from app.services.text import fold_accents
 
 router = APIRouter(tags=["medications"])
 
@@ -32,6 +33,45 @@ class AutocompleteResult(BaseModel):
     inn: str
     form: str
     strength: str
+    matched_brand: str | None = None
+
+
+def _matched_brand(medication: Medication, normalised: str) -> str | None:
+    """The specific brand name that matched `normalised`, or `None`.
+
+    Case-preserving (returns the brand as spelled in the catalogue) so the
+    dropdown can show the user why an INN-unrelated row surfaced, e.g. typing
+    "lu" surfaces Metformin via its brand "Glucophage". Only called once the
+    INN itself has already been ruled out as the match source, per
+    `_rank_medications`.
+    """
+    for brand in (medication.brand_names or "").split(","):
+        brand = brand.strip()
+        if brand and normalised in fold_accents(brand):
+            return brand
+    return None
+
+
+def _rank_medications(medications: list[Medication], normalised: str) -> list[Medication]:
+    """Sort `medications` into 3 tiers: INN prefix, INN substring, brand substring.
+
+    INN matches always outrank brand matches, at any tier, so a row is never
+    shown above a more directly relevant INN hit just because it happened to
+    match earlier alphabetically. Within a tier, rows keep their incoming
+    (INN, strength) order.
+    """
+    tier1: list[Medication] = []
+    tier2: list[Medication] = []
+    tier3: list[Medication] = []
+    for medication in medications:
+        inn_folded = fold_accents(medication.inn)
+        if inn_folded.startswith(normalised):
+            tier1.append(medication)
+        elif normalised in inn_folded:
+            tier2.append(medication)
+        else:
+            tier3.append(medication)
+    return [*tier1, *tier2, *tier3]
 
 
 @router.get("/medications/autocomplete", response_model=list[AutocompleteResult])
@@ -41,48 +81,36 @@ def autocomplete(
 ) -> list[AutocompleteResult]:
     """Up to `AUTOCOMPLETE_LIMIT` catalogue rows matching `q`.
 
-    Ranking: rows whose INN starts with `q` come first (case-insensitive),
-    followed by rows matched only by substring on INN or brand names.
-    Duplicates between the two passes are dropped, keeping the higher-ranked
-    (prefix) occurrence.
+    Ranking (see `_rank_medications`): INN prefix matches first, then INN
+    substring matches, then brand substring matches. Accent-folded and
+    case-insensitive on both sides, matching the SMS catalogue-matching
+    behaviour in `app.services.sms_mock`. A row matched only via a brand
+    name carries that brand in `matched_brand`, so the dropdown can show the
+    user why it surfaced (per DITL Reviewer 1: patients search by brand,
+    e.g. "Glucophage" for Metformin).
     """
-    normalised = q.strip().lower()
+    normalised = fold_accents(q.strip())
     if not normalised:
         return []
 
-    prefix_pattern = f"{normalised}%"
-    substring_pattern = f"%{normalised}%"
+    all_medications = session.execute(
+        select(Medication).order_by(Medication.inn, Medication.strength)
+    ).scalars().all()
 
-    prefix_stmt = (
-        select(Medication)
-        .where(func.lower(Medication.inn).like(prefix_pattern))
-        .order_by(Medication.inn, Medication.strength)
-    )
-    prefix_rows = session.execute(prefix_stmt).scalars().all()
+    matched = [
+        m
+        for m in all_medications
+        if normalised in fold_accents(m.inn) or _matched_brand(m, normalised) is not None
+    ]
+    ranked = _rank_medications(matched, normalised)[:AUTOCOMPLETE_LIMIT]
 
-    substring_stmt = (
-        select(Medication)
-        .where(
-            or_(
-                func.lower(Medication.inn).like(substring_pattern),
-                func.lower(Medication.brand_names).like(substring_pattern),
+    results: list[AutocompleteResult] = []
+    for m in ranked:
+        matched_via_inn = normalised in fold_accents(m.inn)
+        brand = None if matched_via_inn else _matched_brand(m, normalised)
+        results.append(
+            AutocompleteResult(
+                id=m.id, inn=m.inn, form=m.form.value, strength=m.strength, matched_brand=brand
             )
         )
-        .order_by(Medication.inn, Medication.strength)
-    )
-    substring_rows = session.execute(substring_stmt).scalars().all()
-
-    seen_ids: set[int] = set()
-    ordered: list[Medication] = []
-    for medication in (*prefix_rows, *substring_rows):
-        if medication.id in seen_ids:
-            continue
-        seen_ids.add(medication.id)
-        ordered.append(medication)
-        if len(ordered) >= AUTOCOMPLETE_LIMIT:
-            break
-
-    return [
-        AutocompleteResult(id=m.id, inn=m.inn, form=m.form.value, strength=m.strength)
-        for m in ordered
-    ]
+    return results

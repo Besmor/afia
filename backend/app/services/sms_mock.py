@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import logging
 import re
-import unicodedata
 from pathlib import Path
 
 from sqlalchemy import select
@@ -20,6 +19,7 @@ from sqlalchemy.orm import Session
 from app.api.search import SearchResult, search_by_medication, search_medications
 from app.models.pharmacy import Medication, MedicationForm
 from app.services.ranking import walking_distance_m
+from app.services.text import fold_accents
 
 # backend/app/services/sms_mock.py -> parents[3] == repo root
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -178,19 +178,6 @@ def _display_dose(medication: Medication) -> str:
     return f"{label} {compact}" if label else compact
 
 
-def _fold_accents(text: str) -> str:
-    """Lowercase `text` and strip accents, e.g. "Paracétamol" -> "paracetamol".
-
-    Used for catalogue-name comparison only (never for a value shown back to
-    the user), so SMS input arriving with or without accents matches the
-    same catalogue row. Discovered while wiring up the symptom-vs-medication
-    priority check below: unaccented input already matched, but the
-    natural French spelling ("paracétamol") did not.
-    """
-    decomposed = unicodedata.normalize("NFKD", text.lower())
-    return "".join(ch for ch in decomposed if not unicodedata.combining(ch))
-
-
 def _medications_for_inn(session: Session, inn: str) -> list[Medication]:
     """All catalogue rows sharing `inn` exactly, ordered by id (the dose siblings of a match)."""
     stmt = select(Medication).where(Medication.inn == inn).order_by(Medication.id)
@@ -207,15 +194,15 @@ def match_medication(session: Session, text: str) -> Medication | None:
     (e.g. "paracétamol" matches catalogue "Paracetamol") since SMS input is
     French and accents are typed inconsistently on feature phones.
     """
-    normalised = _fold_accents(text)
+    normalised = fold_accents(text)
 
     candidates: list[tuple[str, Medication]] = []
     for medication in session.execute(select(Medication)).scalars():
-        candidates.append((_fold_accents(medication.inn), medication))
+        candidates.append((fold_accents(medication.inn), medication))
         for brand in (medication.brand_names or "").split(","):
             brand = brand.strip()
             if brand:
-                candidates.append((_fold_accents(brand), medication))
+                candidates.append((fold_accents(brand), medication))
 
     candidates.sort(key=lambda pair: len(pair[0]), reverse=True)
     for name, medication in candidates:
