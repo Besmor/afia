@@ -182,7 +182,7 @@ export function PharmacyDetail() {
                 Pour&nbsp;:{' '}
                 <strong>
                   {medicationResult
-                    ? `${medicationResult.medication_inn}, ${medicationResult.medication_strength}`
+                    ? `${showBrand ? brand : medicationResult.medication_inn}, ${medicationResult.medication_strength}`
                     : `médicament #${medicationId}`}
                 </strong>
               </span>
