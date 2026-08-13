@@ -5,6 +5,7 @@ import { formatDistance, haversineDistanceMeters } from '../lib/geo';
 import { formatPriceGnf, formatTime } from '../lib/format';
 import { DEFAULT_LOCATION, getUserLocation, type UserLocation } from '../lib/location';
 import { computeStatus } from '../lib/openingStatus';
+import { formLabelFr } from '../lib/medicationForm';
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -219,14 +220,18 @@ export function PharmacyDetail() {
                           {brand} {medicationResult.medication_strength}
                         </p>
                         <p className={styles.medicationSecondary}>
-                          {medicationResult.medication_inn} · {medicationResult.medication_form}
+                          {medicationResult.medication_inn} · {formLabelFr(medicationResult.medication_form)}
                         </p>
                       </>
                     ) : (
-                      <p className={styles.medicationName}>
-                        {medicationResult.medication_inn}, {medicationResult.medication_form},{' '}
-                        {medicationResult.medication_strength}
-                      </p>
+                      <>
+                        <p className={styles.medicationName}>
+                          {medicationResult.medication_inn} {medicationResult.medication_strength}
+                        </p>
+                        <p className={styles.medicationSecondary}>
+                          {formLabelFr(medicationResult.medication_form)}
+                        </p>
+                      </>
                     )}
                     <span className={styles.stockPill}>
                       <IconStock className={styles.stockIcon} />
