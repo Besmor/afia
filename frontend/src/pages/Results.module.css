@@ -44,9 +44,15 @@
   color: var(--color-gray-02-90);
 }
 
-.heading {
+/* Wraps .heading + .headingSubtitle so the flex:1 sizing that used to sit
+   on .heading alone still applies with the subtitle stacked underneath it
+   (Task #30, brand-first heading). */
+.headingWrap {
   flex: 1;
   min-width: 0;
+}
+
+.heading {
   font-family: 'Baloo Tamma 2', sans-serif;
   font-size: 20px;
   font-weight: var(--font-weight-medium);
@@ -61,6 +67,15 @@
     the truncation after the contrast fix landed. */
   overflow-wrap: anywhere;
   line-height: 1.2;
+}
+
+/* INN subtitle shown under a brand-first heading, e.g. "(Paracétamol)"
+   below "Résultats pour Doliprane 500 mg" (Task #30). */
+.headingSubtitle {
+  font-size: 14px;
+  color: var(--color-gray-02-70);
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 
 /*

@@ -47,8 +47,12 @@ export function Results() {
   const medicationId = medicationIdParam !== null ? Number(medicationIdParam) : undefined;
   const strength = searchParams.get('strength') ?? undefined;
   const inn = searchParams.get('inn') ?? '';
+  // Set only when Landing's autocomplete matched a brand name (Task #30).
+  // Leads the heading/card so a brand search doesn't read as "not found".
+  const brand = searchParams.get('brand');
 
-  const displayTerm = medicationId !== undefined ? `${inn} ${strength ?? ''}`.trim() : query;
+  const displayLabel = brand ?? inn;
+  const displayTerm = medicationId !== undefined ? `${displayLabel} ${strength ?? ''}`.trim() : query;
 
   const [state, setState] = useState<RequestState>({ status: 'loading' });
   // Liste/Maps toggle (Block G), kept in the `view` URL param so browser
@@ -102,7 +106,10 @@ export function Results() {
           <IconChevronLeft className={styles.icon} />
         </button>
 
-        <h1 className={styles.heading}>Résultats pour {displayTerm}</h1>
+        <div className={styles.headingWrap}>
+          <h1 className={styles.heading}>Résultats pour {displayTerm}</h1>
+          {medicationId !== undefined && brand && <p className={styles.headingSubtitle}>({inn})</p>}
+        </div>
 
         <button type="button" className={styles.iconButton} aria-label="Filtrer">
           <IconFilter className={styles.icon} />
@@ -160,7 +167,7 @@ export function Results() {
         <ul className={styles.list}>
           {state.results.map((result) => (
             <li key={`${result.pharmacy_id}-${result.medication_id}`}>
-              <PharmacyCard result={result} userLat={userLat} userLon={userLon} />
+              <PharmacyCard result={result} userLat={userLat} userLon={userLon} brand={brand ?? undefined} />
             </li>
           ))}
         </ul>
@@ -168,7 +175,12 @@ export function Results() {
 
       {state.status === 'success' && view === 'map' && (
         <div className={styles.mapFrame}>
-          <ResultsMap results={state.results} userLat={mapUserLat} userLon={mapUserLon} />
+          <ResultsMap
+            results={state.results}
+            userLat={mapUserLat}
+            userLon={mapUserLon}
+            brand={brand ?? undefined}
+          />
         </div>
       )}
     </main>

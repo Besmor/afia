@@ -63,6 +63,11 @@ export function Landing() {
         user_lat: String(origin.lat),
         user_lon: String(origin.lon),
       });
+      // Carry the matched brand through so Results/Détail can lead with it
+      // instead of the INN (Task #30, Reviewer 1's "walkaway moment").
+      if (medication.matched_brand) {
+        params.set('brand', medication.matched_brand);
+      }
       navigate(`/results?${params.toString()}`);
       return;
     }
