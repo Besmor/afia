@@ -287,8 +287,10 @@ export function MedicationSearch({
               <button
                 type="button"
                 className={`${styles.doseRow} ${
-                  index === doseActiveIndex || dose?.id === option.id ? styles.doseRowActive : ''
-                }`}
+                    index === doseActiveIndex ? styles.doseRowActive : ''
+                  } ${
+                    dose?.id === option.id ? styles.doseRowSelected : ''
+                  }`}
                 onMouseEnter={() => setDoseActiveIndex(index)}
                 onClick={() => selectDose(option)}
                 role="option"

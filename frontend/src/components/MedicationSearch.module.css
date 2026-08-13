@@ -185,3 +185,13 @@
 .doseRowActive {
   background: var(--color-gray-02-20);
 }
+
+.doseRowSelected {
+  background: var(--color-secondary-02);
+  color: var(--color-secondary-04);
+  font-weight: 600;
+}
+
+.doseRowSelected:hover {
+  background: var(--color-secondary-02);
+}
