@@ -162,6 +162,7 @@
   list-style: none;
   background: var(--color-gray-02-10);
   border: 1px solid var(--color-gray-02-30);
+  overflow: hidden;
   border-radius: var(--radius-lg);
   box-shadow: 0 8px 24px rgba(10, 10, 10, 0.08);
 }
