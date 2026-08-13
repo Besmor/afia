@@ -49,5 +49,9 @@ htmlcov/
 .coverage
 coverage.xml
 
+# Evaluation harness output (timestamped runs, regenerate via
+# scripts/eval/track_b_harness.py rather than committing)
+data/eval/
+
 # Claude Code
 .claude/
