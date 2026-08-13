@@ -60,7 +60,7 @@ export function PharmacyDetail() {
 
   const [state, setState] = useState<RequestState>({ status: 'loading' });
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
-  const [activeTab, setActiveTab] = useState<TabKey>('infos');
+  const [activeTab, setActiveTab] = useState<TabKey>('medicaments');
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
   const loadPharmacy = useCallback(() => {
