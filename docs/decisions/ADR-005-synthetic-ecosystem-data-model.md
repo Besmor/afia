@@ -27,16 +27,16 @@ Three-table schema: `pharmacies`, `medications`, `stock_items` (sparse join).
 
 ### `pharmacies` — 15 records, 1:1 mapped to anonymised scan
 
-| Field | Type | Source | Notes |
-|-------|------|--------|-------|
-| id | str PK | Real | `Pharmacy_01`..`Pharmacy_15`, matches anonymised scan |
-| name | str | Synthetic | Plausible French-named placeholders (not real names) |
-| district | enum | Real | Preserves observed distribution: 4 Kaloum, 9 Ratoma, 1 Dixinn, 1 Unknown |
-| latitude, longitude | float | Grounded | Sampled within district polygon (public OSM Conakry commune boundaries) |
-| digital_maturity | enum | Real | Preserves observed distribution: 11 NONE, 3 BASIC_WEBSITE, 1 ECOMMERCE_PARTIAL |
-| phone | str? | Synthetic | Placeholder Guinean-format numbers |
-| opens_at, closes_at | time | Grounded | Calibrated to typical West African community pharmacy hours (08:00-20:00 default; documented in data/synthetic/README.md) |
-| open_on_sunday | bool | Synthetic | ~30% Sunday opening (rotating on-call precedent, invented for MVP) |
+| Field               | Type   | Source    | Notes                                                                                                                     |
+| ------------------- | ------ | --------- | ------------------------------------------------------------------------------------------------------------------------- |
+| id                  | str PK | Real      | `Pharmacy_01`..`Pharmacy_15`, matches anonymised scan                                                                     |
+| name                | str    | Synthetic | Plausible French-named placeholders (not real names)                                                                      |
+| district            | enum   | Real      | Preserves observed distribution: 4 Kaloum, 9 Ratoma, 1 Dixinn, 1 Unknown                                                  |
+| latitude, longitude | float  | Grounded  | Sampled within district polygon (public OSM Conakry commune boundaries)                                                   |
+| digital_maturity    | enum   | Real      | Preserves observed distribution: 11 NONE, 3 BASIC_WEBSITE, 1 ECOMMERCE_PARTIAL                                            |
+| phone               | str?   | Synthetic | Placeholder Guinean-format numbers                                                                                        |
+| opens_at, closes_at | time   | Grounded  | Calibrated to typical West African community pharmacy hours (08:00-20:00 default; documented in data/synthetic/README.md) |
+| open_on_sunday      | bool   | Synthetic | ~30% Sunday opening (rotating on-call precedent, invented for MVP)                                                        |
 
 ### `medications` — WHO EML seeded, ~50-100 records
 
