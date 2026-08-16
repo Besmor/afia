@@ -52,6 +52,18 @@ interface ResultsMapProps {
 /** Only the top N results get a pin; matches the `limit=10` Results.tsx already asks the API for. */
 const MAX_PINS = 10;
 
+/**
+ * Initial `fitBounds` only considers the N nearest pharmacies (Reviewer 1,
+ * D4): the primary decision is which immediately-walkable pharmacy to go
+ * to, so the default view should read as a walking-radius view rather than
+ * zooming out to fit the whole top-10 spread. The full deduped pin set
+ * still renders; the user can zoom out manually to see further pins.
+ */
+const NEAREST_ZOOM_PIN_COUNT = 4;
+
+/** Caps how far the initial `fitBounds` zooms in, so street names stay legible. */
+const INITIAL_MAX_ZOOM = 16;
+
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -108,7 +120,7 @@ function FitBounds({ points }: { points: L.LatLngTuple[] }) {
     map.invalidateSize();
 
     if (points.length > 1) {
-      map.fitBounds(points, { padding: [48, 48] });
+      map.fitBounds(points, { padding: [48, 48], maxZoom: INITIAL_MAX_ZOOM });
     } else if (points.length === 1) {
       map.setView(points[0], 14);
     }
@@ -251,7 +263,14 @@ export function ResultsMap({ results, userLat, userLon, brand }: ResultsMapProps
 
   const boundsPoints = useMemo<L.LatLngTuple[]>(() => {
     const topResults = dedupedResults.slice(0, MAX_PINS);
-    return [[userLat, userLon], ...topResults.map((r): [number, number] => [r.latitude, r.longitude])];
+    const nearest = [...topResults]
+      .sort(
+        (a, b) =>
+          haversineDistanceMeters(userLat, userLon, a.latitude, a.longitude) -
+          haversineDistanceMeters(userLat, userLon, b.latitude, b.longitude),
+      )
+      .slice(0, NEAREST_ZOOM_PIN_COUNT);
+    return [[userLat, userLon], ...nearest.map((r): [number, number] => [r.latitude, r.longitude])];
   }, [dedupedResults, userLat, userLon]);
 
   return (
