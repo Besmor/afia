@@ -52,18 +52,6 @@ interface ResultsMapProps {
 /** Only the top N results get a pin; matches the `limit=10` Results.tsx already asks the API for. */
 const MAX_PINS = 10;
 
-/**
- * Initial `fitBounds` only considers the N nearest pharmacies (Reviewer 1,
- * D4): the primary decision is which immediately-walkable pharmacy to go
- * to, so the default view should read as a walking-radius view rather than
- * zooming out to fit the whole top-10 spread. The full deduped pin set
- * still renders; the user can zoom out manually to see further pins.
- */
-const NEAREST_ZOOM_PIN_COUNT = 4;
-
-/** Caps how far the initial `fitBounds` zooms in, so street names stay legible. */
-const INITIAL_MAX_ZOOM = 16;
-
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -118,14 +106,13 @@ function FitBounds({ points }: { points: L.LatLngTuple[] }) {
 
   useEffect(() => {
     map.invalidateSize();
-
-    if (points.length > 1) {
-      map.fitBounds(points, { padding: [48, 48], maxZoom: INITIAL_MAX_ZOOM });
-    } else if (points.length === 1) {
-      map.setView(points[0], 14);
+    // Reviewer 1 (D4): the default should be a walking-radius view centred on
+    // the user, not a fit-bounds view that zooms out to include far pharmacies.
+    // Zoom 15 keeps street names legible; user can pinch/scroll to see farther
+    // pins that fall outside the initial viewport.
+    if (points.length > 0) {
+      map.setView(points[0], 15);
     }
-    // `points` is memoised by the caller on `results`, so this only re-runs
-    // when a new search actually loads, not on every render.
   }, [map, points]);
 
   return null;
@@ -261,17 +248,10 @@ export function ResultsMap({ results, userLat, userLon, brand }: ResultsMapProps
   const pharmacyCount = dedupedResults.length;
   const selectedResult = pins.find((r) => resultKey(r) === selectedKey) ?? null;
 
-  const boundsPoints = useMemo<L.LatLngTuple[]>(() => {
-    const topResults = dedupedResults.slice(0, MAX_PINS);
-    const nearest = [...topResults]
-      .sort(
-        (a, b) =>
-          haversineDistanceMeters(userLat, userLon, a.latitude, a.longitude) -
-          haversineDistanceMeters(userLat, userLon, b.latitude, b.longitude),
-      )
-      .slice(0, NEAREST_ZOOM_PIN_COUNT);
-    return [[userLat, userLon], ...nearest.map((r): [number, number] => [r.latitude, r.longitude])];
-  }, [dedupedResults, userLat, userLon]);
+  const boundsPoints = useMemo<L.LatLngTuple[]>(
+  () => [[userLat, userLon]],
+  [userLat, userLon],
+);
 
   return (
     <div className={styles.wrap}>
