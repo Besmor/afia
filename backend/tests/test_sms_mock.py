@@ -17,11 +17,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from app.data.seed_db import SYNTHETIC_DIR, seed_all
-from app.models.pharmacy import Base
+from app.models.pharmacy import Base, District
 from app.services.sms_mock import (
     FALLBACK_MESSAGE,
     SMS_MAX_CHARS,
     SYMPTOM_MESSAGE,
+    _parse_district,
     parse_dose,
     respond,
 )
@@ -144,3 +145,62 @@ def test_dose_with_no_matching_strength_lists_available_doses_in_french(session:
     assert message.startswith("Aucune pharmacie pour Paracetamol 250mg.")
     assert "Doses disponibles:" in message
     assert "500mg" in message
+
+
+def test_district_parsing_matches_lowercase_name():
+    stripped, district = _parse_district("paracetamol 500mg kaloum")
+
+    assert district is District.KALOUM
+    assert "kaloum" not in stripped.lower()
+
+
+def test_district_parsing_is_case_insensitive():
+    _, district = _parse_district("paracetamol 500mg RATOMA")
+
+    assert district is District.RATOMA
+
+
+def test_district_parsing_handles_preposition():
+    _, district = _parse_district("paracetamol 500mg à Dixinn")
+
+    assert district is District.DIXINN
+
+
+def test_district_parsing_folds_accents_in_the_rest_of_the_query():
+    """The district name itself is unaccented; this checks accented text
+    elsewhere in the query does not stop the district match from being found."""
+    _, district = _parse_district("paracétamol 500mg matam")
+
+    assert district is District.MATAM
+
+
+def test_district_parsing_falls_back_to_none_with_no_district(session: Session):
+    stripped, district = _parse_district("paracetamol 500mg")
+
+    assert district is None
+    assert stripped == "paracetamol 500mg"
+
+
+def test_district_parsing_falls_back_to_none_for_unknown_place_name():
+    _, district = _parse_district("paracetamol 500mg unknowntown")
+
+    assert district is None
+
+
+def test_sms_query_with_district_ranks_that_districts_pharmacy_first(session: Session):
+    """A district name in the SMS text changes the ranking origin (compare
+    against the plain-query default below), matching what a PWA user with
+    device geolocation already gets."""
+    message = respond(session, "paracetamol 500mg kaloum")
+
+    first_pharmacy_line = message.split("\n")[1]
+    assert "(Kaloum)" in first_pharmacy_line
+
+
+def test_sms_query_without_district_uses_conakry_wide_default(session: Session):
+    """Backwards-compatible: no district word in the text keeps ranking
+    against the Conakry-wide centroid, as before this change."""
+    message = respond(session, "paracetamol 500mg")
+
+    first_pharmacy_line = message.split("\n")[1]
+    assert "(Kaloum)" not in first_pharmacy_line

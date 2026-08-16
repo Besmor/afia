@@ -17,7 +17,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.search import SearchResult, search_by_medication, search_medications
-from app.models.pharmacy import Medication, MedicationForm
+from app.models.pharmacy import District, Medication, MedicationForm
 from app.services.ranking import walking_distance_m
 from app.services.text import fold_accents
 
@@ -27,9 +27,36 @@ LOG_DIR = REPO_ROOT / "logs"
 LOG_PATH = LOG_DIR / "sms_mock.log"
 
 # Conakry city centroid: default origin for an SMS query, which arrives with
-# no device location attached (unlike a PWA request).
+# no device location attached (unlike a PWA request). Used when no district
+# name is found in the query text (see `_parse_district`).
 SMS_DEFAULT_LAT = 9.54
 SMS_DEFAULT_LON = -13.68
+
+# District centroids: midpoints of the bounding boxes in
+# `backend/app/data/conakry_district_bounds.json`, precomputed the same way
+# the frontend's `DISTRICT_BOUNDS`/`centroidOf` (`src/constants/districts.ts`)
+# already does, so a district named in the SMS text narrows the search origin
+# from the Conakry-wide default to that commune. "Unknown" is the backend's
+# non-user-facing catch-all district and is deliberately not offered here,
+# matching the frontend's district picker.
+DISTRICT_CENTROIDS: dict[District, tuple[float, float]] = {
+    District.KALOUM: (9.515, -13.705),
+    District.DIXINN: (9.545, -13.680),
+    District.RATOMA: (9.610, -13.615),
+    District.MATAM: (9.540, -13.660),
+    District.MATOTO: (9.580, -13.575),
+}
+
+# Matches any district name, case-insensitive and accent-folded (input is
+# folded via `fold_accents` before this runs, so the pattern itself only
+# needs the plain lower-case spellings). Word-boundaried so e.g. a longer
+# place name sharing a prefix can't false-positive.
+_DISTRICT_PATTERN = re.compile(
+    r"\b(" + "|".join(fold_accents(district.value) for district in DISTRICT_CENTROIDS) + r")\b"
+)
+_DISTRICT_BY_FOLDED_NAME: dict[str, District] = {
+    fold_accents(district.value): district for district in DISTRICT_CENTROIDS
+}
 
 SMS_RESULT_LIMIT = 3
 SMS_MAX_CHARS = 500
@@ -155,6 +182,28 @@ def parse_dose(text: str) -> tuple[str, tuple[float, str] | None]:
     return stripped, dose
 
 
+def _parse_district(text: str) -> tuple[str, District | None]:
+    """Extract a Conakry district name from `text`.
+
+    Returns `(text_with_district_removed, matched_district)`, or
+    `(text, None)` if no district name is present. Matching is
+    case-insensitive and accent-folded (`fold_accents`), so "Kaloum",
+    "RATOMA", and "à Dixinn" all match; the district token is stripped
+    before catalogue-matching, mirroring `parse_dose`. Folding never
+    changes a French string's character count (verified for the accented
+    Latin letters SMS text actually uses), so a match span found in the
+    folded text lines up with the same span in `text`.
+    """
+    folded = fold_accents(text)
+    match = _DISTRICT_PATTERN.search(folded)
+    if match is None:
+        return text, None
+
+    district = _DISTRICT_BY_FOLDED_NAME[match.group(1)]
+    stripped = (text[: match.start()] + text[match.end() :]).strip()
+    return stripped, district
+
+
 def _dose_from_strength(strength: str) -> tuple[float, str] | None:
     """Extract a comparable (value, unit) dose from a catalogue `Medication.strength` string.
 
@@ -211,18 +260,26 @@ def match_medication(session: Session, text: str) -> Medication | None:
     return None
 
 
-def format_response(medication_name: str, results: list[SearchResult]) -> str:
-    """Format ranked search results as a plain-text SMS reply (French, user-facing)."""
+def format_response(
+    medication_name: str,
+    results: list[SearchResult],
+    origin_lat: float = SMS_DEFAULT_LAT,
+    origin_lon: float = SMS_DEFAULT_LON,
+) -> str:
+    """Format ranked search results as a plain-text SMS reply (French, user-facing).
+
+    `origin_lat`/`origin_lon` is the point the displayed walking distance is
+    measured from; defaults to the Conakry centroid, but `respond` passes a
+    district centroid when `_parse_district` matched one, so the displayed
+    distance stays consistent with the ranking origin used for `results`.
+    """
     if not results:
         return f"Afia: aucune pharmacie n'a actuellement {medication_name} en stock."
 
     lines = [f"Afia — {len(results)} pharmacies pour {medication_name}:"]
     for result in results:
         distance_km = (
-            walking_distance_m(
-                SMS_DEFAULT_LAT, SMS_DEFAULT_LON, result.latitude, result.longitude
-            )
-            / 1000
+            walking_distance_m(origin_lat, origin_lon, result.latitude, result.longitude) / 1000
         )
         lines.append(f"{result.pharmacy_name} ({result.district})")
         lines.append(
@@ -270,11 +327,19 @@ def respond(session: Session, text: str) -> str:
     order: medication, then symptom, then generic unknown fallback), so e.g.
     "paracetamol" alone still asks for a dose rather than tripping the
     symptom branch just because "mal" also matches nothing here.
+
+    A district name anywhere in `text` (see `_parse_district`) narrows the
+    ranking origin from the Conakry-wide centroid to that district's
+    centroid, e.g. "paracetamol 500mg kaloum" ranks against Kaloum rather
+    than the city centre. No district name found falls back to the previous
+    Conakry-wide default, so this is backwards-compatible.
     """
     logger = _get_logger()
     logger.info("REQUEST: %s", text)
 
     stripped_text, dose = parse_dose(text)
+    stripped_text, district = _parse_district(stripped_text)
+    origin_lat, origin_lon = DISTRICT_CENTROIDS.get(district, (SMS_DEFAULT_LAT, SMS_DEFAULT_LON))
     medication = match_medication(session, stripped_text)
     if medication is None:
         if SYMPTOM_PATTERN.search(text):
@@ -304,11 +369,11 @@ def respond(session: Session, text: str) -> str:
         session,
         medication_id=matched_row.id,
         strength=matched_row.strength,
-        user_lat=SMS_DEFAULT_LAT,
-        user_lon=SMS_DEFAULT_LON,
+        user_lat=origin_lat,
+        user_lon=origin_lon,
         limit=SMS_RESULT_LIMIT,
     )
-    message = format_response(medication.inn, results)
+    message = format_response(medication.inn, results, origin_lat, origin_lon)
 
     if len(message) > SMS_MAX_CHARS:
         logger.warning(
