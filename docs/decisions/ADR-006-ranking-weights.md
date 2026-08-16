@@ -37,13 +37,13 @@ This is a straight-line-to-network-distance approximation, not a routed path. A 
 
 ### Digital-maturity tier trust mapping
 
-| Tier | Trust score | Rationale |
-|------|-------------|-----------|
-| API_LINKED | 1.0 | Live system integration; stock figure is as fresh as it can be |
-| ECOMMERCE_FULL | 0.9 | Pharmacy actively maintains online stock/price data |
-| ECOMMERCE_PARTIAL | 0.6 | Some online presence, but stock data is only partially maintained |
-| BASIC_WEBSITE | 0.4 | Web presence exists but is not evidence of stock-data discipline |
-| NONE | 0.2 | No digital footprint; stock figure is the least likely to be current |
+| Tier              | Trust score | Rationale                                                            |
+| ----------------- | ----------- | -------------------------------------------------------------------- |
+| API_LINKED        | 1.0         | Live system integration; stock figure is as fresh as it can be       |
+| ECOMMERCE_FULL    | 0.9         | Pharmacy actively maintains online stock/price data                  |
+| ECOMMERCE_PARTIAL | 0.6         | Some online presence, but stock data is only partially maintained    |
+| BASIC_WEBSITE     | 0.4         | Web presence exists but is not evidence of stock-data discipline     |
+| NONE              | 0.2         | No digital footprint; stock figure is the least likely to be current |
 
 This mirrors the `last_verified_at` staleness calibration already documented in ADR-005 (higher tiers get fresher timestamps): the tier is a proxy for how likely the recorded quantity still reflects reality. The floor is 0.2, not 0.0, because a NONE-tier pharmacy's stock signal is still synthetic ground truth in this evaluation context, not worthless; it should be discounted, not excluded.
 

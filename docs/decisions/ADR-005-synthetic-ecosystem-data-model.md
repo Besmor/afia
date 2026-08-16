@@ -40,15 +40,15 @@ Three-table schema: `pharmacies`, `medications`, `stock_items` (sparse join).
 
 ### `medications` — WHO EML seeded, ~50-100 records
 
-| Field | Type | Source |
-|-------|------|--------|
-| id | int PK | Auto |
-| inn | str | Real (WHO EML International Non-proprietary Names) |
-| brand_names | str? | Synthetic (plausible; not tied to real brands) |
-| form | enum | Real (tablet, capsule, syrup, injection, ointment, drops, suppository, sachet) |
-| strength | str | Real (WHO EML strengths, e.g. "500 mg") |
-| therapeutic_class | str | Real (WHO EML anatomical/therapeutic groupings) |
-| is_who_essential | bool | Real |
+| Field             | Type   | Source                                                                         |
+| ----------------- | ------ | ------------------------------------------------------------------------------ |
+| id                | int PK | Auto                                                                           |
+| inn               | str    | Real (WHO EML International Non-proprietary Names)                             |
+| brand_names       | str?   | Synthetic (plausible; not tied to real brands)                                 |
+| form              | enum   | Real (tablet, capsule, syrup, injection, ointment, drops, suppository, sachet) |
+| strength          | str    | Real (WHO EML strengths, e.g. "500 mg")                                        |
+| therapeutic_class | str    | Real (WHO EML anatomical/therapeutic groupings)                                |
+| is_who_essential  | bool   | Real                                                                           |
 
 ### `stock_items` — sparse join
 
