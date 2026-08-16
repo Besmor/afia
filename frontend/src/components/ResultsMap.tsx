@@ -22,6 +22,25 @@ function resultKey(result: SearchResult): string {
   return `${result.pharmacy_id}-${result.medication_id}`;
 }
 
+/**
+ * Keeps the first (highest-ranked, since `results` is pre-sorted by
+ * `combined_score`) row per pharmacy. A pharmacy stocking a medication in
+ * multiple forms (e.g. Paracetamol tablet and syrup) otherwise produces two
+ * `SearchResult` rows with identical coordinates, which stack an invisible
+ * duplicate pin on top of the visible one (Block G followup). List view
+ * (Results.tsx) is unaffected: each row there is still a distinct offer.
+ */
+function dedupeByPharmacy(results: SearchResult[]): SearchResult[] {
+  const seen = new Set<string>();
+  const deduped: SearchResult[] = [];
+  for (const result of results) {
+    if (seen.has(result.pharmacy_id)) continue;
+    seen.add(result.pharmacy_id);
+    deduped.push(result);
+  }
+  return deduped;
+}
+
 interface ResultsMapProps {
   results: SearchResult[];
   userLat: number;
@@ -223,14 +242,17 @@ function SelectedPharmacyCard({ result, userLat, userLon, onClose, brand }: Sele
 export function ResultsMap({ results, userLat, userLon, brand }: ResultsMapProps) {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
-  const pins = results.slice(0, MAX_PINS);
-  const pharmacyCount = new Set(results.map((r) => r.pharmacy_id)).size;
+  // Dedupe before slicing so the 10-pin budget is spent on distinct
+  // pharmacies rather than wasted on stacked same-pharmacy duplicates.
+  const dedupedResults = useMemo(() => dedupeByPharmacy(results), [results]);
+  const pins = dedupedResults.slice(0, MAX_PINS);
+  const pharmacyCount = dedupedResults.length;
   const selectedResult = pins.find((r) => resultKey(r) === selectedKey) ?? null;
 
   const boundsPoints = useMemo<L.LatLngTuple[]>(() => {
-    const topResults = results.slice(0, MAX_PINS);
+    const topResults = dedupedResults.slice(0, MAX_PINS);
     return [[userLat, userLon], ...topResults.map((r): [number, number] => [r.latitude, r.longitude])];
-  }, [results, userLat, userLon]);
+  }, [dedupedResults, userLat, userLon]);
 
   return (
     <div className={styles.wrap}>
