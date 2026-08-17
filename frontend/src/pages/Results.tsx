@@ -111,7 +111,15 @@ export function Results() {
           {medicationId !== undefined && brand && <p className={styles.headingSubtitle}>({inn})</p>}
         </div>
 
-        <button type="button" className={styles.iconButton} aria-label="Filtrer">
+        <button
+          type="button"
+          className={styles.iconButton}
+          aria-label="Filtrer (fonction à venir)"
+          aria-disabled="true"
+          title="Fonction à venir"
+          onClick={(event) => event.preventDefault()}
+          style={{ opacity: 0.35, cursor: 'not-allowed' }}
+        >
           <IconFilter className={styles.icon} />
         </button>
       </header>
