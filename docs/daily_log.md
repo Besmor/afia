@@ -134,6 +134,51 @@ pre-existing and would be a separate Block H.
 awaiting slot confirmation). Doctor 2 still awaiting reply — could be
 Wed 13 or Thu 14.
 
+## 2026-08-17 (Monday, evening)
+
+Session-limit block on Sunday consumed most of the intended write-up
+window. Recovered Monday: full first read of the dissertation
+end-to-end, roughly 78 review notes captured in
+`docs/dissertation_review_notes.md`, tagged by intent
+(`[polish] [factual] [voice] [cut] [add] [format] [global]`). Notes
+surface four factual issues to fix Tuesday: the Doliprane trademark
+claim, the paracetamol-in-pregnancy example, the price-variation
+nuance, and the Sunday-opening percentage origin. Also a global
+terminology fix: the artefact has a filter icon button (single control)
+not filter chips (multiple pills as in Figma); dissertation prose
+consistently misnames these.
+
+QMPlus session PDFs plus the module forum reviewed thoroughly. Two
+big planning corrections against earlier assumptions: the video is 10
+minutes ±10 percent (not 3 minutes), and Supporting Material is a
+distinct submission item (not folded into the dissertation appendix).
+Two files created to persist the Q&A and video plan:
+`docs/submission_faq_from_forum.md` and `docs/video_script.md`.
+
+Pre-submission tweak batch closed: the Results filter icon shipped
+with a visible-disabled treatment (`opacity: 0.35`, `cursor:
+not-allowed`, `title="Fonction à venir"`) matching the map-popover
+Bookmark button pattern, in commit `6a1457a`. Test in Safari confirmed
+the cursor and tooltip render as expected; Chrome suppresses tooltip
+but shows the greyed-out state.
+
+Video recording started Monday night in OBS Studio 32.2.2. Sources
+configured: `Screen` (macOS Screen Capture, Display Capture, Show
+cursor, Hide OBS from capture) and `Webcam` (FaceTime HD, Preset
+High). Screen fitted to the 1920x1080 canvas via `Cmd+F`. Webcam
+positioned bottom-right; recording output configured to MP4 with
+Apple hardware H.264 encoder into `/Users/abdourahamanebesmorbah/Movies`.
+No test recording completed yet; the first attempt surfaced a Retina-
+resolution zoom issue that was fixed by fitting the Screen source to
+canvas. Slides deck not yet built. Video segment plan documented in
+`docs/video_script.md` (11 segments totalling 10 min; user additions
+for the PWA segment integrated: deny-location opener, OSM directions
+click, Android emulator vs Chrome DevTools mobile viewport as
+fallback).
+
+`PROGRESS.md` written at the MSc Project folder root as a dense
+handoff for a fresh AI assistant to resume the work.
+
 ## 2026-08-12 (Wednesday)
 
 **Shipped:** Sea-pharmacies fix (commit e4014eb). Iterated once on
