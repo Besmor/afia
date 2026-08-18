@@ -276,7 +276,7 @@ def format_response(
     if not results:
         return f"Afia: aucune pharmacie n'a actuellement {medication_name} en stock."
 
-    lines = [f"Afia — {len(results)} pharmacies pour {medication_name}:"]
+    lines = [f"Afia - {len(results)} pharmacies pour {medication_name}:"]
     for result in results:
         distance_km = (
             walking_distance_m(origin_lat, origin_lon, result.latitude, result.longitude) / 1000

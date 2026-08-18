@@ -43,7 +43,7 @@ def test_medication_and_dose_query_returns_formatted_pharmacy_response(session: 
     """A query with a matching dose token gets the existing top-3 pharmacy list."""
     message = respond(session, "Where can I find paracetamol 500mg?")
 
-    assert message.startswith("Afia — 3 pharmacies pour Paracetamol:")
+    assert message.startswith("Afia - 3 pharmacies pour Paracetamol:")
     assert "Stock:" in message
     assert "Prix:" in message
     assert "km" in message
@@ -52,7 +52,7 @@ def test_medication_and_dose_query_returns_formatted_pharmacy_response(session: 
 def test_brand_name_and_dose_query_matches_via_brand_names(session: Session):
     message = respond(session, "Do you have doliprane 500mg?")
 
-    assert message.startswith("Afia — 3 pharmacies pour Paracetamol:")
+    assert message.startswith("Afia - 3 pharmacies pour Paracetamol:")
 
 
 def test_no_medication_match_returns_french_fallback(session: Session):
