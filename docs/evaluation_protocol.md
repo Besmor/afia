@@ -114,11 +114,12 @@ against the seeded ecosystem (seed `20260806`, 15 pharmacies, 25 medications,
 - **Channel:** SMS (this is the most realistic SMS scenario)
 - **Expected behaviour:** the catalogue matcher does NOT identify a
   medication (headache is a symptom, not a catalogue INN). The SMS fallback
-  is returned: "Afia: type a medication name (e.g. 'paracetamol') to find
-  nearby pharmacies with stock."
+  is returned: "Afia n'a pas reconnu ce médicament. Vérifiez l'orthographe
+  ou envoyez le nom exact (ex: paracétamol). Afia ne remplace pas votre
+  pharmacien."
 - **What this tests:** the parser's boundary handling and the user-friendliness
   of the fallback message; verifies the "intentionally light NLP" scope
-  decision (CLAUDE.md) is defensible.
+  decision is defensible.
 - **Literature anchor (Track B):** Agarwal et al. (2020) user-friendly design
   is one of 12 identified implementation factors.
 

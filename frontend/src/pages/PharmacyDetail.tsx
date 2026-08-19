@@ -28,7 +28,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'infos', label: 'Infos pharmacie' },
 ];
 
-/** Tabs shown per the Figma frame but out of MVP scope (CLAUDE.md critical path). */
+/** Tabs shown per the Figma frame but out of MVP scope (critical-path prioritisation). */
 const DISABLED_TABS = ['Moyen de paiement', 'Avis utilisateurs'];
 
 const DAYS_OF_WEEK = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];

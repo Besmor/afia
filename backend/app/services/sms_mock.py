@@ -1,6 +1,6 @@
 """SMS mock service.
 
-Simulates the SMS gateway channel described in CLAUDE.md and README.md: a
+Simulates the SMS gateway channel described in README.md: a
 raw inbound text arrives, gets matched against the medication catalogue,
 and a plain-text reply is composed from the same ranked search + ranking
 logic that backs `GET /search`. No real SMS provider is involved; this is a
@@ -236,7 +236,7 @@ def _medications_for_inn(session: Session, inn: str) -> list[Medication]:
 def match_medication(session: Session, text: str) -> Medication | None:
     """Find the medication whose INN or a brand name is a case-insensitive substring of `text`.
 
-    Catalogue matching only, per CLAUDE.md's "NLP parser is intentionally
+    Catalogue matching only, per the project's "NLP parser is intentionally
     light" principle: no tokenisation or fuzzy matching. Candidate names are
     checked longest-first so a short brand name can't pre-empt a longer, more
     specific match earlier in table order. Accents are folded on both sides

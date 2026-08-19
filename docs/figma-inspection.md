@@ -233,7 +233,7 @@ Radii observed (no named tokens; values baked into each component):
 
 - **Node ID:** `5886:2595`
 - **Status: NOT INSPECTED** — same blocker. Note for later: we already know
-  (from `docs/decisions` context / CLAUDE.md) that pharmacy proximity uses
+  (from `docs/decisions` context) that pharmacy proximity uses
   walking-distance ranking (Friesen et al. 2025) — check whether the map
   screen's pin/list affordances match that framing once inspected.
 
@@ -357,7 +357,7 @@ consistency even though no designer-authored frame exists for them.
    radius/shadow token collection (see Design System → Spacing/Radii above)
    — everything is a hand-set pixel value per component, and the exported
    reference code is already Tailwind-based (arbitrary-value classes like
-   `rounded-[24px]`, `px-[12px]`). Given CLAUDE.md leaves the choice open
+   `rounded-[24px]`, `px-[12px]`). Given the project brief leaves the choice open
    "after Figma inspection": **recommend Tailwind**. It maps almost
    1:1 onto the arbitrary pixel values Figma exports, avoids hand-rolling a
    token system the design doesn't actually have, and every MCP-returned

@@ -39,7 +39,7 @@ so evaluators know how to judge the artefact.
 where a reader who doesn't touch the code can still follow the flow.
 
 **Sources.** `README.md` mermaid diagram (copy it into the chapter),
-`CLAUDE.md` "Architecture principles" section, `docs/decisions/`
+the project's architecture-principles notes, `docs/decisions/`
 ADRs 001-006.
 
 **Bullets to write:**
@@ -112,7 +112,7 @@ qui prime").
 **Purpose.** Justify the deliberate scope of the NLP: catalogue-match,
 not free-form NLU.
 
-**Sources.** `CLAUDE.md` "Architecture principles" (parser is
+**Sources.** The project's architecture-principles notes (parser is
 intentionally light), `backend/app/services/sms_mock.py`,
 Reviewer 1 quote about brand-first shopping.
 

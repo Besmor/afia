@@ -21,7 +21,7 @@ We need a single combined score to sort by, and each of its inputs needs its own
 
 `combined_score = 0.6 * distance_score + 0.2 * stock_score + 0.2 * tier_score`
 
-Distance dominates because the core user need is "which nearby pharmacy has drug X", per CLAUDE.md's search-first principle. Stock and trust are weighted equally and lower: they matter, but should not override a pharmacy being genuinely far away, nor should either one alone override the other.
+Distance dominates because the core user need is "which nearby pharmacy has drug X", per the project's search-first design principle. Stock and trust are weighted equally and lower: they matter, but should not override a pharmacy being genuinely far away, nor should either one alone override the other.
 
 Each factor is normalised to [0, 1] independently before weighting:
 

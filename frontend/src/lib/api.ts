@@ -6,7 +6,7 @@
  * never makes a cross-origin request and the backend needs no CORS
  * middleware. In production this assumes the PWA is served from behind the
  * same origin as the API, or the proxy target is swapped for a real one;
- * that deployment concern is out of scope for the local demo (see CLAUDE.md).
+ * that deployment concern is out of scope for the local demo.
  */
 
 export interface SearchResult {

@@ -1,6 +1,6 @@
 # Afia Runbook
 
-Afia is a middle-layer pharmaceutical access platform for Conakry, Guinea. A FastAPI backend is the single source of truth for medication search over a synthetic pharmacy ecosystem, served to two channels: a React PWA (not yet built, see `docs/`) and a local SMS mock. This runbook gets the backend running and exercised end to end. Full project context lives in `README.md` and `CLAUDE.md`.
+Afia is a middle-layer pharmaceutical access platform for Conakry, Guinea. A FastAPI backend is the single source of truth for medication search over a synthetic pharmacy ecosystem, served to two channels: a React PWA (not yet built, see `docs/`) and a local SMS mock. This runbook gets the backend running and exercised end to end. Full project context lives in `README.md`.
 
 ## Prerequisites
 
@@ -84,18 +84,18 @@ Expected shape: a JSON array of pharmacy/medication/stock matches, ranked best-f
 
 ## Try the SMS mock
 
-No real SMS provider is involved (ethics/scope constraint) — this is a local Python mock that parses a text string and returns the reply a feature-phone user would see. Run from the repo root with the backend venv active.
+No real SMS provider is involved (ethics/scope constraint) — this is a local Python mock that parses a text string and returns the reply a feature-phone user would see. All replies are French, matching the target SMS user base (feature-phone users in Conakry, Guinea). Run from the repo root with the backend venv active.
 
 ```bash
 # INN query
-python scripts/sms_mock.py "Where can I find paracetamol?"
+python scripts/sms_mock.py "Où puis-je trouver du paracetamol ?"
 
 # Brand-name query
-python scripts/sms_mock.py "Do you have Doliprane?"
+python scripts/sms_mock.py "Avez-vous du Doliprane ?"
 
 # Fallback (no medication matched)
-python scripts/sms_mock.py "hello there"
-# Afia: type a medication name (e.g. 'paracetamol') to find nearby pharmacies with stock.
+python scripts/sms_mock.py "bonjour"
+# Afia n'a pas reconnu ce médicament. Vérifiez l'orthographe ou envoyez le nom exact (ex: paracétamol). Afia ne remplace pas votre pharmacien.
 ```
 
 Each exchange is logged to `logs/sms_mock.log`.

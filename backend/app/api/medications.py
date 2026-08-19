@@ -4,8 +4,8 @@ GET /medications/autocomplete backs the Landing page's search-bar dropdown
 (Block F): as the caller types, it returns individual catalogue rows
 (INN + form + strength) rather than search results, so the PWA can let the
 user pick an exact medication before ever hitting `GET /search`. This is the
-"lightweight NLP catalogue-matching" principle from CLAUDE.md applied to
-autocomplete rather than free-text search.
+"lightweight NLP catalogue-matching" principle applied to autocomplete
+rather than free-text search.
 """
 from __future__ import annotations
 

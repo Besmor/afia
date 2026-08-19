@@ -144,7 +144,7 @@ function SelectedPharmacyCard({ result, userLat, userLon, onClose, brand }: Sele
   const status = computeStatus(result.opens_at, result.closes_at, result.open_on_sunday);
 
   // Walking engine, matching the app's walking-distance ranking ethos
-  // (CLAUDE.md, Friesen et al. 2025) rather than OSM's driving default.
+  // (Friesen et al. 2025) rather than OSM's driving default.
   const directionsHref =
     `https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=` +
     `${userLat}%2C${userLon}%3B${result.latitude}%2C${result.longitude}`;
@@ -214,7 +214,7 @@ function SelectedPharmacyCard({ result, userLat, userLon, onClose, brand }: Sele
         >
           <IconDirections className={styles.iconCircleGlyph} />
         </a>
-        {/* Bookmarking is visual only for the MVP (out of critical-path scope, CLAUDE.md). */}
+        {/* Bookmarking is visual only for the MVP (out of critical-path scope). */}
         <button
           type="button"
           className={styles.iconCircleButtonDisabled}

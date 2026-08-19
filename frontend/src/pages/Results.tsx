@@ -25,8 +25,8 @@ type ResultsView = 'list' | 'map';
  * recherches*.svg`.
  *
  * The filter-popup content from the Figma frame still has no backing logic
- * — per CLAUDE.md's critical-path scope, only the filter *icon* is
- * rendered, inert.
+ * — only the filter *icon* is rendered for this MVP's critical-path scope,
+ * inert.
  */
 export function Results() {
   const navigate = useNavigate();

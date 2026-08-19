@@ -59,7 +59,7 @@ fails, only that segment needs re-recording.
 *Spoken:*
 
 > "Hi, I'm Abdourahamane Besmor BAH, MSc Advanced Computer Science at
-> Queen Mary University of London, supervised by Dr Waleed Iqbal. This
+> Queen Mary University of London, supervised by Waleed Iqbal. This
 > is my project: Afia — a middle-layer pharmaceutical access platform
 > for Guinea. Over the next ten minutes I'll walk you through the
 > problem it addresses, the design and implementation, the evaluation,
@@ -73,9 +73,9 @@ fails, only that segment needs re-recording.
 
 *Spoken:*
 
-> "Guinea faces a critical pharmaceutical accessibility crisis, linked
+> "Guinea faces a critical medication accessibility crisis, linked
 > to a broader digitalisation gap. Patients often spend hours going from
-> one pharmacy to another, looking for products on their prescription.
+> one pharmacy to another, looking for particular products on their prescription.
 > A digital-maturity scan of fifteen pharmacies in Guinea's capital,
 > Conakry, that I conducted for this project, found that none of them
 > currently expose an API or maintain a functional online inventory.
@@ -110,8 +110,7 @@ fails, only that segment needs re-recording.
 > "Afia is a middle-layer platform. It couples a Progressive Web App
 > for smartphone users with an SMS interface for users on basic mobile
 > phones, over a shared FastAPI backend. The backend is the single
-> source of truth: both channels call the same HTTP API, and no
-> business logic lives in the frontend. This makes the platform
+> source of truth: both channels call the same HTTP API. This makes the platform
 > deployable today via a grounded synthetic pharmacy ecosystem,
 > extensible to real pharmacy APIs as they emerge. The backend is
 > Python 3.11 with FastAPI and SQLite; the PWA is React with TypeScript
@@ -193,7 +192,7 @@ click, no setup, visually 90 percent as good).
 
 **Length: ~2:40 (aim for 3 min max).**
 
-### Segment 6 — SMS live demo (6:00 - 7:15)
+### Segment 6 — SMS live demo (6:00 - 7:15) - ✅
 
 **Terminal recording** with voice-over, no face. Split screen with
 browser optional.
@@ -201,18 +200,14 @@ browser optional.
 *Actions and matching voice-over:*
 
 - Run: `python scripts/sms_mock.py "paracetamol 500mg"`
-  > "The SMS channel uses the same backend. Sending a bare medication
-  > and dose returns the top three pharmacies with stock and price, in
-  > French, capped at two SMS segments."
+  > "The SMS channel uses the same backend as the Progressive Web App. Sending a bare medication and dose, here Paracetamol 500mg, returns the top three pharmacies, with stock, price and distance from the Conakry centroid. The result is in French".
 
 - Run: `python scripts/sms_mock.py "paracetamol 500mg kaloum"`
   > "Since feature-phone SMS doesn't carry device location, users can
-  > append a district name. Adding 'kaloum' re-ranks the results
-  > against the Kaloum district centroid instead of the default Conakry
-  > centre."
+  > append a district name. Watch what happens when I add 'kaloum', Conakry's city-centre district. the Kaloum pharmacy jumps from third to first, and every distance updates, because the search is now anchored to the Kaloum centroid instead of the default Conakry centre."
 
 - Run: `python scripts/sms_mock.py "j'ai mal à la tête"`
-  > "This is the most consequential design decision the evaluation
+  > "J'ai mal à la tête means I have a headache. This is the most consequential design decision the evaluation
   > surfaced. If the query is symptom-shaped rather than
   > medication-shaped, the platform refuses to suggest a drug and
   > directs the user to a doctor or pharmacist. This branch was
@@ -222,8 +217,7 @@ browser optional.
   > that the DITL methodology surfaced."
 
 - Run: `python scripts/sms_mock.py "zoloft"`
-  > "For a brand not in the catalogue, the fallback is also in French,
-  > gently redirecting the user to check the spelling."
+  > "For a brand not in the catalogue, the fallback is also in French, gently redirecting the user to check the spelling."
 
 **Length: ~1:15.**
 
@@ -236,7 +230,7 @@ browser optional.
 > "The platform is evaluated under a two-track Design Science Research
 > methodology. Track A is Doctor-in-the-Loop: two qualified medical
 > professionals, referred to as Reviewer 1 and Reviewer 2, each spent
-> around forty-five minutes walking through six scripted scenarios on
+> an hour and half in average, walking through six scripted scenarios on
 > the platform. Track B is a scripted headless harness that runs the
 > same six scenarios against the seeded ecosystem and dumps
 > deterministic JSON output. Together, Track A and Track B cover the
