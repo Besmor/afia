@@ -149,7 +149,7 @@ source .venv/bin/activate
 pytest
 ```
 
-Expected: 18 passed, across 5 files (`test_ranking.py`, `test_search.py`, `test_seed_db.py`, `test_sms_mock.py`, plus the package `__init__.py`). SQLAlchemy `datetime.utcnow()` deprecation warnings are expected noise (TD-002, deferred).
+Expected: 50 passed, across 6 test files (`test_medications.py`, `test_pharmacies.py`, `test_ranking.py`, `test_search.py`, `test_seed_db.py`, `test_sms_mock.py`). SQLAlchemy `datetime.utcnow()` deprecation warnings are expected noise (TD-002, deferred).
 
 ## Regenerate synthetic data
 
