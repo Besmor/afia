@@ -78,6 +78,12 @@ curl "http://127.0.0.1:8000/search?q=doliprane"
 
 # Explicit caller location (defaults to the Kaloum centroid if omitted)
 curl "http://127.0.0.1:8000/search?q=amoxicillin&user_lat=9.54&user_lon=-13.68&limit=5"
+
+# Syrup form, via brand name (Ventolin -> Salbutamol, syrup, 2 mg/5 ml)
+curl "http://127.0.0.1:8000/search?q=ventolin&limit=3"
+
+# Injection form, via brand name (Mixtard -> Insulin (soluble, human), 100 IU/ml)
+curl "http://127.0.0.1:8000/search?q=mixtard&limit=3"
 ```
 
 Expected shape: a JSON array of pharmacy/medication/stock matches, ranked best-first, empty array if nothing matches.
@@ -87,15 +93,50 @@ Expected shape: a JSON array of pharmacy/medication/stock matches, ranked best-f
 No real SMS provider is involved (ethics/scope constraint) — this is a local Python mock that parses a text string and returns the reply a feature-phone user would see. All replies are French, matching the target SMS user base (feature-phone users in Conakry, Guinea). Run from the repo root with the backend venv active.
 
 ```bash
-# INN query
+# INN query (Paracetamol has two dose forms in the seed, so this asks back)
 python scripts/sms_mock.py "Où puis-je trouver du paracetamol ?"
 
-# Brand-name query
+# Brand-name query (Doliprane -> Paracetamol)
 python scripts/sms_mock.py "Avez-vous du Doliprane ?"
 
 # Fallback (no medication matched)
 python scripts/sms_mock.py "bonjour"
 # Afia n'a pas reconnu ce médicament. Vérifiez l'orthographe ou envoyez le nom exact (ex: paracétamol). Afia ne remplace pas votre pharmacien.
+```
+
+A different medication, with dose supplied up front — since Ibuprofen has only one
+catalogue entry (tablet, 400mg), this resolves directly to the ranked pharmacy list
+(`format_response`) rather than an ask-back. Output depends on your local synthetic
+seed, so it isn't reproduced here — run it and compare against
+`GET /search?q=ibuprofen` below.
+
+```bash
+python scripts/sms_mock.py "ibuprofene 400mg"
+```
+
+Same query with a district named in the text — narrows the ranking origin from the
+Conakry-wide default (`SMS_DEFAULT_LAT`/`LON`) to that commune's centroid
+(`DISTRICT_CENTROIDS`), so the distances shown differ from the query above:
+
+```bash
+python scripts/sms_mock.py "ibuprofene 400mg ratoma"
+```
+
+Brand name only, no dose yet — an injection-form medication this time (not Paracetamol/Doliprane), triggering the French ask-back rather than a pharmacy list:
+
+```bash
+python scripts/sms_mock.py "mixtard"
+# Insulin (soluble, human): injection 100IU/ml. Répondez avec la dose pour voir les pharmacies.
+```
+
+Symptom description rather than a medication name — this is the safety-critical
+branch (`SYMPTOM_MESSAGE`, DITL Reviewer 1 P0): Afia deliberately refuses to guess a
+drug for a symptom and defers to a clinician instead, regardless of any dose-like
+tokens in the text:
+
+```bash
+python scripts/sms_mock.py "jai mal a la tete"
+# Afia ne propose pas de médicament pour un symptôme. Consultez votre médecin ou pharmacien. Envoyez ensuite le nom du médicament prescrit pour vérifier les stocks.
 ```
 
 Each exchange is logged to `logs/sms_mock.log`.
